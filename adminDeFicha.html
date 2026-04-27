@@ -1,1 +1,159 @@
-<!-- Aqui ficará a página do administrador de ficha -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administrador de Ficha (WAR)</title>
+  <style>
+    /* ── Layout básico ────────────────────────────────────────────────────── */
+
+    #app {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    }
+
+    #frame-atributos {
+    flex: 1;
+    }
+
+    #frame-controles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 220px;
+    }
+
+    /* ── Atributos ───────────────────────────────────────────────────────── */
+
+    .atributo {
+    display: flex;
+    justify-content: space-between;
+    margin: 4px 0;
+    }
+
+    /* ── Controles ───────────────────────────────────────────────────────── */
+
+    fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    }
+
+    /* ── Modais ──────────────────────────────────────────────────────────── */
+
+    .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .modal[hidden] {
+    display: none;
+    }
+
+    .modal-conteudo {
+    background: #fff;
+    padding: 24px;
+    min-width: 280px;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+
+    #modal-ficha-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    }
+
+    .modal-botoes {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- Coluna esquerda: exibição dos atributos -->
+    <div id="frame-atributos">
+      <h2 id="nome-personagem"></h2>
+
+      <div id="atributos-lista"></div>
+
+      <p id="aviso-vazio">Nenhuma ficha encontrada. Crie uma ficha para começar.</p>
+    </div>
+
+    <!-- Coluna direita: controles -->
+    <div id="frame-controles">
+
+      <!-- Alterar Vida -->
+      <fieldset id="frame-mudar-vida">
+        <legend>Alterar Vida</legend>
+        <input type="number" id="entrada-vida" placeholder="Valor (ex: -10 ou +5)" />
+        <button onclick="app.alterarAtributoValor(2, document.getElementById('entrada-vida').value)">
+          Mudar Vida
+        </button>
+      </fieldset>
+
+      <!-- Alterar Sanidade -->
+      <fieldset id="frame-mudar-sanidade">
+        <legend>Alterar Sanidade</legend>
+        <input type="number" id="entrada-sanidade" placeholder="Valor (ex: -10 ou +5)" />
+        <button onclick="app.alterarAtributoValor(4, document.getElementById('entrada-sanidade').value)">
+          Mudar Sanidade
+        </button>
+      </fieldset>
+
+      <!-- Alterar Atributo individual -->
+      <fieldset id="frame-mudar-atributo">
+        <legend>Alterar Atributo</legend>
+        <select id="selecao-atributo"></select>
+        <button onclick="app.abrirModalAtributo()">Mudar Atributo</button>
+      </fieldset>
+
+      <!-- Editar ficha toda -->
+      <fieldset id="frame-mudar-ficha-toda">
+        <legend>Ficha Completa</legend>
+        <button onclick="app.abrirModalFichaCompleta()">Criar / Alterar Ficha</button>
+      </fieldset>
+
+    </div>
+  </div>
+
+  <!-- Modal: alterar um atributo -->
+  <div id="modal-atributo" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3 id="modal-atributo-titulo"></h3>
+      <p id="modal-atributo-atual"></p>
+      <input type="text" id="modal-atributo-entrada" placeholder="Novo valor" />
+      <div class="modal-botoes">
+        <button onclick="app.salvarAtributo()">Salvar</button>
+        <button onclick="app.fecharModal('modal-atributo')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: editar ficha completa -->
+  <div id="modal-ficha" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Criar / Alterar Ficha</h3>
+      <div id="modal-ficha-campos"></div>
+      <div class="modal-botoes">
+        <button onclick="app.salvarFichaCompleta()">OK</button>
+        <button onclick="app.fecharModal('modal-ficha')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/fichas.js"></script>
+</body>
+</html>
