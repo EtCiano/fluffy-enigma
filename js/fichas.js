@@ -1,29 +1,26 @@
-// ─── Configuração ────────────────────────────────────────────────────────────
-
-const LOCAIS = [
-  'nome',
-  'vida total',
-  'vida atual',
-  'sanidade total',
-  'sanidade atual',
-  'esgrima',
-  'inteligencia',
-  'resistencia',
-  'reflexos',
-  'agilidade',
-  'regeneração',
-  'força',
-  'velocidade',
-  'energia',
-  'precisão',
-  'furtividade'
-];
-
-const STORAGE_KEY = 'war_ficha';
+const STORAGE_KEY = 'ficha';
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
-let linhas = []; // array de strings, uma por atributo (sem '\n')
+let fichas = [
+  {
+    'nome': "Taiyo Suki",
+    'vida': [60, 60],
+    'sanidade': [22, 50],
+    'esgrima': 21,
+    'inteligencia': 13,
+    'resistencia': 12,
+    'reflexos': 16,
+    'agilidade': 15,
+    'regeneração': 10,
+    'força': 12,
+    'velocidade': 13,
+    'energia': 13,
+    'precisão': 11,
+    'furtividade': 11
+  }
+]
+let fichaAtiva = 0
 let indiceAtributoSendoEditado = null;
 
 // ─── Persistência (localStorage) ─────────────────────────────────────────────
@@ -31,14 +28,14 @@ let indiceAtributoSendoEditado = null;
 function carregarFicha() {
   const salvo = localStorage.getItem(STORAGE_KEY);
   if (salvo) {
-    linhas = JSON.parse(salvo);
+    fichas = JSON.parse(salvo);
     return true;
   }
   return false;
 }
 
 function salvarFicha() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(linhas));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(fichas));
 }
 
 // ─── Renderização ─────────────────────────────────────────────────────────────
@@ -48,7 +45,7 @@ function mostrarAtributos() {
   const nomeEl = document.getElementById('nome-personagem');
   const listaEl = document.getElementById('atributos-lista');
 
-  if (linhas.length < LOCAIS.length) {
+  if (!fichas[fichaAtiva]) {
     avisoEl.hidden = false;
     nomeEl.textContent = '';
     listaEl.innerHTML = '';
@@ -57,45 +54,28 @@ function mostrarAtributos() {
 
   avisoEl.hidden = true;
 
-  nomeEl.textContent = linhas[0];
+  const ficha = fichas[fichaAtiva];
+  nomeEl.textContent = ficha['nome'];
 
-  // Demais atributos
   listaEl.innerHTML = '';
 
-  for (let i = 1; i < LOCAIS.length; i++) {
-    // Índice 1: vida total  |  2: vida atual  → exibe juntos
-    if (i === 1) {
-      const p = document.createElement('p');
-      p.className = 'atributo atributo-barra';
-      p.dataset.indice = i;
-      p.innerHTML =
-        `<span class="atributo-nome">Vida</span>` +
-        `<span class="atributo-valor">${linhas[2]} / ${linhas[1]}</span>`;
-      listaEl.appendChild(p);
-      continue;
-    }
-    if (i === 2) continue; // já exibido junto com 1
-
-    // Índice 3: sanidade total  |  4: sanidade atual → exibe juntos
-    if (i === 3) {
-      const p = document.createElement('p');
-      p.className = 'atributo atributo-barra';
-      p.dataset.indice = i;
-      p.innerHTML =
-        `<span class="atributo-nome">Sanidade</span>` +
-        `<span class="atributo-valor">${linhas[4]} / ${linhas[3]}</span>`;
-      listaEl.appendChild(p);
-      continue;
-    }
-    if (i === 4) continue; // já exibido junto com 3
-
-    // Demais atributos normais
+  for (const [chave, valor] of Object.entries(ficha)) {
+    if (chave === 'nome') continue;
     const p = document.createElement('p');
-    p.className = 'atributo';
-    p.dataset.indice = i;
-    p.innerHTML =
-      `<span class="atributo-nome">${capitalizar(LOCAIS[i])}</span>` +
-      `<span class="atributo-valor">${linhas[i]}</span>`;
+    p.dataset.chave = chave;
+
+    if (Array.isArray(valor)) {
+      p.className = 'atributo atributo-barra';
+      p.innerHTML =
+        `<span class="atributo-nome">${capitalizar(chave)}</span>` +
+        `<span class="atributo-valor">${valor[0]} / ${valor[1]}</span>`;
+    } else {
+      p.className = 'atributo';
+      p.innerHTML =
+        `<span class="atributo-nome">${capitalizar(chave)}</span>` +
+        `<span class="atributo-valor">${valor}</span>`;
+    }
+
     listaEl.appendChild(p);
   }
 }
@@ -103,39 +83,88 @@ function mostrarAtributos() {
 function preencherSelectAtributos() {
   const select = document.getElementById('selecao-atributo');
   select.innerHTML = '';
-  LOCAIS.forEach((local, i) => {
+  const ficha = fichas[fichaAtiva];
+  Object.keys(ficha).forEach((chave) => {
     const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = capitalizar(local);
+    opt.value = chave;
+    opt.textContent = capitalizar(chave);
     select.appendChild(opt);
+  });
+}
+
+function gerarControlesArrays() {
+  const container = document.getElementById('controles-arrays');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  const ficha = fichas[fichaAtiva];
+  
+  Object.entries(ficha).forEach(([chave, valor]) => {
+    if (Array.isArray(valor)) {
+      const fieldset = document.createElement('fieldset');
+      const legend = document.createElement('legend');
+      legend.textContent = `Alterar ${capitalizar(chave)}`;
+      
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.id = `entrada-${chave}`;
+      input.placeholder = 'Valor (ex: -10 ou +5)';
+      
+      const button = document.createElement('button');
+      button.textContent = `Mudar ${capitalizar(chave)}`;
+      button.onclick = () => {
+        app.alterarAtributoValor(chave, document.getElementById(`entrada-${chave}`).value);
+      };
+      
+      fieldset.appendChild(legend);
+      fieldset.appendChild(input);
+      fieldset.appendChild(button);
+      container.appendChild(fieldset);
+    }
   });
 }
 
 // ─── Ações ────────────────────────────────────────────────────────────────────
 
-function alterarAtributoValor(indice, valor) {
+function alterarAtributoValor(chave, valor) {
   const num = parseInt(valor, 10);
   if (isNaN(num)) {
     alert('Digite um número válido.');
     return;
   }
-  const atual = parseInt(linhas[indice], 10) || 0;
-  linhas[indice] = String(atual + num);
+  const ficha = fichas[fichaAtiva];
+  if (Array.isArray(ficha[chave])) {
+    ficha[chave][0] = Math.max(0, ficha[chave][0] + num);
+  } else {
+    const atual = parseInt(ficha[chave], 10) || 0;
+    ficha[chave] = atual + num;
+  }
   salvarFicha();
   mostrarAtributos();
 }
 
 function abrirModalAtributo() {
   const select = document.getElementById('selecao-atributo');
-  indiceAtributoSendoEditado = parseInt(select.value, 10);
+  indiceAtributoSendoEditado = select.value;
+
+  const ficha = fichas[fichaAtiva];
+  const valor = ficha[indiceAtributoSendoEditado];
 
   document.getElementById('modal-atributo-titulo').textContent =
-    capitalizar(LOCAIS[indiceAtributoSendoEditado]);
+    capitalizar(indiceAtributoSendoEditado);
+  
+  let valorAtual = '—';
+  if (Array.isArray(valor)) {
+    valorAtual = `${valor[0]} / ${valor[1]}`;
+  } else if (valor !== undefined) {
+    valorAtual = valor;
+  }
+  
   document.getElementById('modal-atributo-atual').textContent =
-    'Valor atual: ' + (linhas[indiceAtributoSendoEditado] ?? '—');
+    'Valor atual: ' + valorAtual;
 
   const entrada = document.getElementById('modal-atributo-entrada');
-  entrada.value = linhas[indiceAtributoSendoEditado] ?? '';
+  entrada.value = Array.isArray(valor) ? valor[0] : (valor ?? '');
 
   abrirModal('modal-atributo');
 }
@@ -146,7 +175,12 @@ function salvarAtributo() {
     alert('Digite um valor.');
     return;
   }
-  linhas[indiceAtributoSendoEditado] = valor;
+  const ficha = fichas[fichaAtiva];
+  if (Array.isArray(ficha[indiceAtributoSendoEditado])) {
+    ficha[indiceAtributoSendoEditado][0] = parseInt(valor, 10) || 0;
+  } else {
+    ficha[indiceAtributoSendoEditado] = isNaN(valor) ? valor : parseInt(valor, 10);
+  }
   salvarFicha();
   mostrarAtributos();
   fecharModal('modal-atributo');
@@ -156,34 +190,141 @@ function abrirModalFichaCompleta() {
   const container = document.getElementById('modal-ficha-campos');
   container.innerHTML = '';
 
-  LOCAIS.forEach((campo, i) => {
+  const ficha = fichas[fichaAtiva] || {};
+
+  Object.keys(ficha).forEach((chave) => {
+    const valor = ficha[chave];
     const label = document.createElement('label');
-    label.textContent = capitalizar(campo);
-    label.htmlFor = `ficha-campo-${i}`;
+    label.textContent = capitalizar(chave);
+    label.htmlFor = `ficha-campo-${chave}`;
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = `ficha-campo-${i}`;
-    input.placeholder = capitalizar(campo);
-    input.value = linhas[i] ?? '';
+    if (Array.isArray(valor)) {
+      const divBarra = document.createElement('div');
+      const inputAtual = document.createElement('input');
+      inputAtual.type = 'number';
+      inputAtual.id = `ficha-campo-${chave}-atual`;
+      inputAtual.placeholder = 'Atual';
+      inputAtual.value = valor[0];
+      
+      const inputTotal = document.createElement('input');
+      inputTotal.type = 'number';
+      inputTotal.id = `ficha-campo-${chave}-total`;
+      inputTotal.placeholder = 'Total';
+      inputTotal.value = valor[1];
 
-    container.appendChild(label);
-    container.appendChild(input);
+      divBarra.appendChild(inputAtual);
+      divBarra.appendChild(document.createTextNode(' / '));
+      divBarra.appendChild(inputTotal);
+
+      container.appendChild(label);
+      container.appendChild(divBarra);
+    } else {
+      const input = document.createElement('input');
+      input.type = isNaN(valor) ? 'text' : 'number';
+      input.id = `ficha-campo-${chave}`;
+      input.placeholder = capitalizar(chave);
+      input.value = valor ?? '';
+
+      container.appendChild(label);
+      container.appendChild(input);
+    }
   });
 
   abrirModal('modal-ficha');
 }
 
+
 function salvarFichaCompleta() {
-  const novasLinhas = [];
-  for (let i = 0; i < LOCAIS.length; i++) {
-    const input = document.getElementById(`ficha-campo-${i}`);
-    novasLinhas.push(input ? input.value.trim() : '');
-  }
-  linhas = novasLinhas;
+  const novaFicha = {};
+  const ficha = fichas[fichaAtiva] || {};
+  
+  Object.keys(ficha).forEach((chave) => {
+    const valor = ficha[chave];
+    if (Array.isArray(valor)) {
+      const inputAtual = document.getElementById(`ficha-campo-${chave}-atual`);
+      const inputTotal = document.getElementById(`ficha-campo-${chave}-total`);
+      novaFicha[chave] = [
+        parseInt(inputAtual?.value, 10) || 0,
+        parseInt(inputTotal?.value, 10) || 0
+      ];
+    } else {
+      const input = document.getElementById(`ficha-campo-${chave}`);
+      const val = input?.value.trim() || '';
+      novaFicha[chave] = isNaN(val) ? val : parseInt(val, 10);
+    }
+  });
+  
+  fichas[fichaAtiva] = novaFicha;
   salvarFicha();
+  gerarControlesArrays();
   mostrarAtributos();
   fecharModal('modal-ficha');
+}
+
+function abrirModalAdicionaratributo() {
+  abrirModal('modal-add-atributo');
+}
+
+function adicionarAtributo() {
+  inputNome = document.getElementById('nome-novo-atributo')
+  nome = inputNome.value.trim()
+
+  atributoTexto = document.getElementById('atributo-novo-texto')
+  eTexto = atributoTexto.checked
+
+  atributoArray = document.getElementById('atributo-novo-array')
+  eArray = atributoArray.checked
+
+  if (nome) {
+    if (eTexto) {
+      fichas[fichaAtiva][nome] = document.getElementById('valor-novo-atributo').value
+    } else if (eArray) {
+      fichas[fichaAtiva][nome] = [
+        parseInt(document.getElementById('valor-novo-atributo').value, 10) || 0,
+        parseInt(document.getElementById('valor-novo-atributo-max').value, 10) || 0
+      ]
+    } else {
+      fichas[fichaAtiva][nome] = parseInt(document.getElementById('valor-novo-atributo').value, 10) || 0
+    }
+    
+    salvarFicha();
+    gerarControlesArrays();
+    mostrarAtributos();
+    preencherSelectAtributos();
+    fecharModal('modal-add-atributo');
+    inputNome.value = ''
+  }
+}
+
+function abrirModalRemoverAtributo() {
+  const select = document.getElementById('select-remover-atributo');
+  select.innerHTML = '';
+  const ficha = fichas[fichaAtiva];
+  
+  Object.keys(ficha).forEach((chave) => {
+    if (chave !== 'nome') {
+      const opt = document.createElement('option');
+      opt.value = chave;
+      opt.textContent = capitalizar(chave);
+      select.appendChild(opt);
+    }
+  });
+  
+  abrirModal('modal-remover-atributo');
+}
+
+function removerAtributo() {
+  const select = document.getElementById('select-remover-atributo');
+  const chave = select.value;
+  
+  if (chave && fichas[fichaAtiva][chave] !== undefined) {
+    delete fichas[fichaAtiva][chave];
+    salvarFicha();
+    gerarControlesArrays();
+    mostrarAtributos();
+    preencherSelectAtributos();
+    fecharModal('modal-remover-atributo');
+  }
 }
 
 // ─── Modais ───────────────────────────────────────────────────────────────────
@@ -221,17 +362,20 @@ const app = {
   abrirModalFichaCompleta,
   salvarFichaCompleta,
   fecharModal,
+  abrirModalAdicionaratributo,
+  adicionarAtributo,
+  abrirModalRemoverAtributo,
+  removerAtributo
 };
 
 (function init() {
-  preencherSelectAtributos();
-
   const fichaExiste = carregarFicha();
 
-  if (!fichaExiste || linhas.length < LOCAIS.length) {
-    // Abre modal de criação automaticamente se não houver ficha
+  if (!fichaExiste || !fichas[fichaAtiva]) {
     abrirModalFichaCompleta();
   } else {
+    preencherSelectAtributos();
+    gerarControlesArrays();
     mostrarAtributos();
   }
 })();
