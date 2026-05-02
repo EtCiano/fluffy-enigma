@@ -77,6 +77,14 @@
     gap: 8px;
     justify-content: flex-end;
     }
+
+    .checkbox-linha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    }
   </style>
 </head>
 <body>
@@ -95,23 +103,7 @@
     <!-- Coluna direita: controles -->
     <div id="frame-controles">
 
-      <!-- Alterar Vida -->
-      <fieldset id="frame-mudar-vida">
-        <legend>Alterar Vida</legend>
-        <input type="number" id="entrada-vida" placeholder="Valor (ex: -10 ou +5)" />
-        <button onclick="app.alterarAtributoValor(2, document.getElementById('entrada-vida').value)">
-          Mudar Vida
-        </button>
-      </fieldset>
-
-      <!-- Alterar Sanidade -->
-      <fieldset id="frame-mudar-sanidade">
-        <legend>Alterar Sanidade</legend>
-        <input type="number" id="entrada-sanidade" placeholder="Valor (ex: -10 ou +5)" />
-        <button onclick="app.alterarAtributoValor(4, document.getElementById('entrada-sanidade').value)">
-          Mudar Sanidade
-        </button>
-      </fieldset>
+      <div id="controles-arrays"></div>
 
       <!-- Alterar Atributo individual -->
       <fieldset id="frame-mudar-atributo">
@@ -124,6 +116,18 @@
       <fieldset id="frame-mudar-ficha-toda">
         <legend>Ficha Completa</legend>
         <button onclick="app.abrirModalFichaCompleta()">Criar / Alterar Ficha</button>
+      </fieldset>
+
+      <!-- Adicionar atributo à ficha atual -->
+      <fieldset id="frame-adicionar-atributo">
+        <legend>Adicionar Atributo</legend>
+        <button onclick="app.abrirModalAdicionaratributo()">Adicionar Atributo</button>
+      </fieldset>
+
+      <!-- Remover atributo -->
+      <fieldset id="frame-remover-atributo">
+        <legend>Remover Atributo</legend>
+        <button onclick="app.abrirModalRemoverAtributo()">Remover Atributo</button>
       </fieldset>
 
     </div>
@@ -154,6 +158,88 @@
     </div>
   </div>
 
+  <!-- Modal: adicionar atributo à ficha atual -->
+   <div id="modal-add-atributo" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Adicionar Atributo à ficha atual</h3>
+      <label for="nome-novo-atributo">Nome do Novo Atributo</label>
+      <input type="text" id="nome-novo-atributo" placeholder="Nome">
+
+      <label for="valor-novo-atributo">Valor do Novo Atributo</label>
+      <input type="number" id="valor-novo-atributo" placeholder="Valor">
+      <div id="container-array" style="display: none;">
+        <input type="number" id="valor-novo-atributo-max" placeholder="Valor Máximo">
+      </div>
+
+      <div class="checkbox-linha">
+        <label for="atributo-novo-texto">Atributo é um Texto</label>
+        <input type="checkbox" id="atributo-novo-texto">
+      </div>
+
+      <div class="checkbox-linha">
+        <label for="atributo-novo-array">Atributo Tem um valor total e um atual</label>
+        <input type="checkbox" id="atributo-novo-array">
+      </div>
+      
+      <div class="modal-botoes">
+        <button onclick="app.adicionarAtributo()">OK</button>
+        <button onclick="app.fecharModal('modal-add-atributo')">Cancelar</button>
+      </div>
+    </div>
+   </div>
+
+  <!-- Modal: remover atributo da ficha atual -->
+   <div id="modal-remover-atributo" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Remover Atributo da ficha atual</h3>
+      <label for="select-remover-atributo">Selecione o Atributo</label>
+      <select id="select-remover-atributo"></select>
+      
+      <div class="modal-botoes">
+        <button onclick="app.removerAtributo()">Remover</button>
+        <button onclick="app.fecharModal('modal-remover-atributo')">Cancelar</button>
+      </div>
+    </div>
+   </div>
+
   <script src="js/fichas.js"></script>
+  <script>
+    const checkTexto = document.getElementById('atributo-novo-texto');
+    const checkArray = document.getElementById('atributo-novo-array');
+    const inputValor = document.getElementById('valor-novo-atributo');
+    const containerArray = document.getElementById('container-array');
+
+    checkTexto.addEventListener('change', () => {
+      if (checkTexto.checked && checkArray.checked) {
+        alert('Não é possível selecionar ambos os tipos. Desmarque um deles.');
+        checkTexto.checked = false;
+        return;
+      }
+      if (checkTexto.checked) {
+        inputValor.type = 'text';
+        inputValor.placeholder = 'Texto';
+        containerArray.style.display = 'none';
+      } else {
+        inputValor.type = 'number';
+        inputValor.placeholder = 'Valor';
+      }
+    });
+
+    checkArray.addEventListener('change', () => {
+      if (checkTexto.checked && checkArray.checked) {
+        alert('Não é possível selecionar ambos os tipos. Desmarque um deles.');
+        checkArray.checked = false;
+        return;
+      }
+      if (checkArray.checked) {
+        inputValor.type = 'number';
+        inputValor.placeholder = 'Valor Atual';
+        containerArray.style.display = 'block';
+      } else {
+        inputValor.placeholder = 'Valor';
+        containerArray.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
