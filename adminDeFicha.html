@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administrador de Ficha (WAR)</title>
+  <title>Administrador de Ficha</title>
   <style>
     /* ── Layout básico ────────────────────────────────────────────────────── */
 
@@ -15,13 +15,35 @@
 
     #frame-atributos {
     flex: 1;
+    min-width: 0;
     }
 
     #frame-controles {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-width: 220px;
+    width: 200px;
+    flex-shrink: 0;
+    }
+
+    /* Telas médias: controles um pouco menores mas ainda à direita */
+    @media (max-width: 600px) and (min-width: 421px) {
+    #frame-controles {
+      width: 160px;
+    }
+    }
+
+    /* Telas pequenas: ficha em cima, controles embaixo, coluna única */
+    @media (max-width: 420px) {
+    #app {
+      flex-direction: column;
+      padding: 12px;
+      gap: 16px;
+    }
+
+    #frame-controles {
+      width: 100%;
+    }
     }
 
     /* ── Atributos ───────────────────────────────────────────────────────── */
@@ -85,6 +107,31 @@
     flex-direction: row-reverse;
     justify-content: flex-end;
     }
+
+    .atributo.reordenavel {
+    cursor: grab;
+    background: #f9f9f9;
+    padding: 8px;
+    margin: 8px 0;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+    }
+
+    .atributo.reordenavel:hover {
+    background: #f0f0f0;
+    border-color: #999;
+    }
+
+    .atributo.arrastando {
+    opacity: 0.35;
+    cursor: grabbing;
+    }
+
+    .atributo.drag-over {
+    border-color: #4CAF50;
+    background: #e8f5e9;
+    }
   </style>
 </head>
 <body>
@@ -128,6 +175,12 @@
       <fieldset id="frame-remover-atributo">
         <legend>Remover Atributo</legend>
         <button onclick="app.abrirModalRemoverAtributo()">Remover Atributo</button>
+      </fieldset>
+
+      <!-- Reordenar atributos -->
+      <fieldset id="frame-reordenar-atributos">
+        <legend>Reordenar Atributos</legend>
+        <button onclick="app.toggleModoReordenar()">Modo Reordenar</button>
       </fieldset>
 
     </div>
