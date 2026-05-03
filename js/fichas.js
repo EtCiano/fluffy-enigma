@@ -5,7 +5,7 @@ const STORAGE_KEY = 'ficha';
 let fichas = [
   {
     'nome': null,
-    'HP': [null, null]
+    'vida': [null, null]
   }
 ];
 let fichaAtiva = 0;
@@ -260,7 +260,11 @@ function abrirModalFichaCompleta() {
       container.appendChild(div);
     } else {
       const input = document.createElement('input');
-      input.type  = isNaN(valor) ? 'text' : 'number';
+      if (chave === 'nome') {
+        input.type = 'text';
+      } else {
+        input.type = isNaN(valor) ? 'text' : 'number';
+      }
       input.id    = `ficha-campo-${chave}`;
       input.value = valor ?? '';
       input.placeholder = capitalizar(chave);
