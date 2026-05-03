@@ -4,20 +4,6 @@ const STORAGE_KEY = 'ficha';
 
 let fichas = [
   {
-    'nome': "Taiyo Suki",
-    'vida': [60, 60],
-    'sanidade': [22, 50],
-    'esgrima': 21,
-    'inteligencia': 13,
-    'resistencia': 12,
-    'reflexos': 16,
-    'agilidade': 15,
-    'regeneração': 10,
-    'força': 12,
-    'velocidade': 13,
-    'energia': 13,
-    'precisão': 11,
-    'furtividade': 11
   }
 ]
 let fichaAtiva = 0
