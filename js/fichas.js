@@ -5,7 +5,7 @@ const STORAGE_KEY = 'ficha';
 let fichas = [
   {
     'nome': null,
-    'HP': null
+    'HP': [null, null]
   }
 ];
 let fichaAtiva = 0;
