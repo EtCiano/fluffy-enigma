@@ -4,147 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrador de Ficha</title>
-  <style>
-    /* ── Layout básico ────────────────────────────────────────────────────── */
-
-    #app {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    }
-
-    #frame-atributos {
-    flex: 1;
-    min-width: 0;
-    }
-
-    #frame-controles {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 200px;
-    flex-shrink: 0;
-    }
-
-    /* Telas médias: controles um pouco menores mas ainda à direita */
-    @media (max-width: 600px) and (min-width: 421px) {
-    #frame-controles {
-      width: 160px;
-    }
-    }
-
-    /* Telas pequenas: ficha em cima, controles embaixo, coluna única */
-    @media (max-width: 420px) {
-    #app {
-      flex-direction: column;
-      padding: 12px;
-      gap: 16px;
-    }
-
-    #frame-controles {
-      width: 100%;
-    }
-    }
-
-    /* ── Atributos ───────────────────────────────────────────────────────── */
-
-    .atributo {
-    display: flex;
-    justify-content: space-between;
-    margin: 4px 0;
-    }
-
-    /* ── Controles ───────────────────────────────────────────────────────── */
-
-    fieldset {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    }
-
-    /* ── Modais ──────────────────────────────────────────────────────────── */
-
-    .modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    }
-
-    .modal[hidden] {
-    display: none;
-    }
-
-    .modal-conteudo {
-    background: #fff;
-    padding: 24px;
-    min-width: 280px;
-    max-height: 80vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    }
-
-    #modal-ficha-campos {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    }
-
-    .modal-botoes {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-    }
-
-    .checkbox-linha {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    }
-
-    .atributo.reordenavel {
-    cursor: grab;
-    background: #f9f9f9;
-    padding: 8px;
-    margin: 8px 0;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    transition: background 0.15s, border-color 0.15s, opacity 0.15s;
-    }
-
-    .atributo.reordenavel:hover {
-    background: #f0f0f0;
-    border-color: #999;
-    }
-
-    .atributo.arrastando {
-    opacity: 0.35;
-    cursor: grabbing;
-    }
-
-    .atributo.drag-over {
-    border-color: #4CAF50;
-    background: #e8f5e9;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <div id="app">
 
-    <!-- Coluna esquerda: exibição dos atributos -->
-    <div id="frame-atributos">
-      <h2 id="nome-personagem"></h2>
+    <div id="ficha-atributos">
+      <!-- Coluna esquerda: exibição dos atributos -->
+      <div id="frame-atributos">
+        <div id="cabecalho-ficha">
+          <button onclick="app.fichaAnterior()"><</button>
+          <h2 id="nome-personagem"></h2>
+          <button onclick="app.proximaFicha()">></button>
+          <div class="botoes-cabecalho">
+            <button onclick="app.criarFicha()">+ Ficha</button>
+          </div>
+          <div class="botoes-cabecalho">
+            <button onclick="app.abrirModalAdicionaratributo()">+ Atributo</button>
+            <button onclick="app.abrirModalRemoverAtributo()">− Atributo</button>
+          </div>
+        </div>
 
-      <div id="atributos-lista"></div>
+        <div id="atributos-lista"></div>
 
-      <p id="aviso-vazio">Nenhuma ficha encontrada. Crie uma ficha para começar.</p>
+        <p id="aviso-vazio">Nenhuma ficha encontrada. Crie uma ficha para começar.</p>
+      </div>
     </div>
 
     <!-- Coluna direita: controles -->
@@ -162,25 +46,19 @@
       <!-- Editar ficha toda -->
       <fieldset id="frame-mudar-ficha-toda">
         <legend>Ficha Completa</legend>
-        <button onclick="app.abrirModalFichaCompleta()">Criar / Alterar Ficha</button>
-      </fieldset>
-
-      <!-- Adicionar atributo à ficha atual -->
-      <fieldset id="frame-adicionar-atributo">
-        <legend>Adicionar Atributo</legend>
-        <button onclick="app.abrirModalAdicionaratributo()">Adicionar Atributo</button>
-      </fieldset>
-
-      <!-- Remover atributo -->
-      <fieldset id="frame-remover-atributo">
-        <legend>Remover Atributo</legend>
-        <button onclick="app.abrirModalRemoverAtributo()">Remover Atributo</button>
+        <button onclick="app.abrirModalFichaCompleta()">Alterar Ficha</button>
       </fieldset>
 
       <!-- Reordenar atributos -->
       <fieldset id="frame-reordenar-atributos">
         <legend>Reordenar Atributos</legend>
         <button onclick="app.toggleModoReordenar()">Modo Reordenar</button>
+      </fieldset>
+
+      <!-- Deletar ficha atual-->
+      <fieldset id="frame-reordenar-atributos">
+        <legend class="deletar-field">Deletar ficha atual</legend>
+        <button class="deletar-field" id="botao-deletar" onclick="app.deletarFicha()">DELETAR</button>
       </fieldset>
 
     </div>
@@ -191,7 +69,7 @@
     <div class="modal-conteudo">
       <h3 id="modal-atributo-titulo"></h3>
       <p id="modal-atributo-atual"></p>
-      <input type="text" id="modal-atributo-entrada" placeholder="Novo valor" />
+      <div id="modal-atributo-inputs"></div>
       <div class="modal-botoes">
         <button onclick="app.salvarAtributo()">Salvar</button>
         <button onclick="app.fecharModal('modal-atributo')">Cancelar</button>
