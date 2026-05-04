@@ -4,20 +4,8 @@ const STORAGE_KEY = 'ficha';
 
 let fichas = [
   {
-    'nome': "Taiyo Suki",
-    'vida': [60, 60],
-    'sanidade': [22, 50],
-    'esgrima': 21,
-    'inteligencia': 13,
-    'resistencia': 12,
-    'reflexos': 16,
-    'agilidade': 15,
-    'regeneração': 10,
-    'força': 12,
-    'velocidade': 13,
-    'energia': 13,
-    'precisão': 11,
-    'furtividade': 11
+    'nome': null,
+    'vida': [null, null]
   }
 ];
 
@@ -465,10 +453,12 @@ function deletarFicha() {
   certeza++;
   if (certeza == 1) {
     botao.classList.add('botao-certeza');
+    botao.innerHTML = 'Tem certeza?'
   }
   if (certeza == 2) {
     certeza = 0;
     botao.classList.remove('botao-certeza');
+    botao.innerHTML = 'DELETAR'
     
     fichas.splice(fichaAtiva, 1);
     
