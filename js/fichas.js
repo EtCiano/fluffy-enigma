@@ -34,7 +34,7 @@ function mostrarAtributos() {
   const avisoEl = document.getElementById('aviso-vazio');
   const nomeEl  = document.getElementById('nome-personagem');
   const listaEl = document.getElementById('atributos-lista');
-  const btnReordenar = document.getElementById('btn-reordenar');
+  const btnModoEdicao = document.getElementById('btn-modo-edicao');
 
   if (!fichas[fichaAtiva]) {
     avisoEl.hidden = false;
@@ -44,9 +44,9 @@ function mostrarAtributos() {
   }
 
   avisoEl.hidden = true;
-  if (btnReordenar) {
-    btnReordenar.textContent = modoReordenar ? '✓ Concluir Reordenação' : 'Reordenar Atributos';
-    btnReordenar.classList.toggle('ativo', modoReordenar);
+  if (btnModoEdicao) {
+    btnModoEdicao.textContent = modoReordenar ? '✓ Concluir Edição' : 'deletar/ordenar atributos';
+    btnModoEdicao.classList.toggle('ativo', modoReordenar);
   }
 
   const ficha = fichas[fichaAtiva];
@@ -62,12 +62,28 @@ function mostrarAtributos() {
 
     if (Array.isArray(valor)) {
       item.innerHTML += `
-        <span class="atributo-nome">${capitalizar(chave)}</span>
+        <span class="atributo-nome">${capitalizar(chave)}:</span>
         <span class="atributo-valor barra">${valor[0]} / ${valor[1]}</span>`;
     } else {
       item.innerHTML += `
-        <span class="atributo-nome">${capitalizar(chave)}</span>
+        <span class="atributo-nome">${capitalizar(chave)}:</span>
         <span class="atributo-valor">${valor}</span>`;
+    }
+
+    if (modoReordenar) {
+      const btnDel = document.createElement('button');
+      btnDel.className = 'btn-deletar-atributo';
+      btnDel.textContent = '🗑';
+      btnDel.title = `Remover ${capitalizar(chave)}`;
+      btnDel.addEventListener('click', (e) => {
+        e.stopPropagation();
+        delete fichas[fichaAtiva][chave];
+        salvarFicha();
+        gerarControlesArrays();
+        preencherSelectAtributos();
+        mostrarAtributos();
+      });
+      item.appendChild(btnDel);
     }
 
     listaEl.appendChild(item);
@@ -352,11 +368,13 @@ function abrirModalAdicionaratributo() {
   // Limpa campos ao abrir
   document.getElementById('nome-novo-atributo').value   = '';
   document.getElementById('valor-novo-atributo').value  = '';
+  document.getElementById('valor-novo-atributo-atual').value = '';
   document.getElementById('valor-novo-atributo-max').value = '';
   document.getElementById('atributo-novo-texto').checked = false;
   document.getElementById('atributo-novo-array').checked = false;
   document.getElementById('valor-novo-atributo').type   = 'number';
   document.getElementById('valor-novo-atributo').placeholder = 'Valor';
+  document.getElementById('container-valor').style.display = 'block';
   document.getElementById('container-array').style.display = 'none';
   abrirModal('modal-add-atributo');
 }
@@ -373,7 +391,7 @@ function adicionarAtributo() {
     fichas[fichaAtiva][nome] = document.getElementById('valor-novo-atributo').value;
   } else if (eArray) {
     fichas[fichaAtiva][nome] = [
-      parseInt(document.getElementById('valor-novo-atributo').value,     10) || 0,
+      parseInt(document.getElementById('valor-novo-atributo-atual').value, 10) || 0,
       parseInt(document.getElementById('valor-novo-atributo-max').value, 10) || 0,
     ];
   } else {
