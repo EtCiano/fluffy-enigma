@@ -4,10 +4,23 @@ const STORAGE_KEY = 'ficha';
 
 let fichas = [
   {
-    'nome': null,
-    'vida': [null, null]
+    'nome': "Taiyo Suki",
+    'vida': [60, 60],
+    'sanidade': [22, 50],
+    'esgrima': 21,
+    'inteligencia': 13,
+    'resistencia': 12,
+    'reflexos': 16,
+    'agilidade': 15,
+    'regeneração': 10,
+    'força': 12,
+    'velocidade': 13,
+    'energia': 13,
+    'precisão': 11,
+    'furtividade': 11
   }
 ];
+
 let fichaAtiva = 0;
 let indiceAtributoSendoEditado = null;
 let modoReordenar = false;
@@ -204,22 +217,67 @@ function abrirModalAtributo() {
   document.getElementById('modal-atributo-atual').textContent  =
     'Valor atual: ' + (Array.isArray(valor) ? `${valor[0]} / ${valor[1]}` : (valor ?? '—'));
 
-  const entrada = document.getElementById('modal-atributo-entrada');
-  entrada.value = Array.isArray(valor) ? valor[0] : (valor ?? '');
+  const container = document.getElementById('modal-atributo-inputs');
+  container.innerHTML = '';
+
+  if (Array.isArray(valor)) {
+    const div = document.createElement('div');
+    div.className = 'campo-barra';
+
+    const inputAtual = document.createElement('input');
+    inputAtual.type = 'number';
+    inputAtual.id = 'modal-atributo-entrada-atual';
+    inputAtual.placeholder = 'Atual';
+    inputAtual.value = valor[0];
+
+    const inputTotal = document.createElement('input');
+    inputTotal.type = 'number';
+    inputTotal.id = 'modal-atributo-entrada-total';
+    inputTotal.placeholder = 'Total';
+    inputTotal.value = valor[1];
+
+    div.appendChild(inputAtual);
+    div.appendChild(document.createTextNode(' / '));
+    div.appendChild(inputTotal);
+    container.appendChild(div);
+  } else {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'modal-atributo-entrada';
+    input.placeholder = 'Novo valor';
+    input.value = valor ?? '';
+    container.appendChild(input);
+  }
 
   abrirModal('modal-atributo');
 }
 
 function salvarAtributo() {
-  const valor = document.getElementById('modal-atributo-entrada').value.trim();
-  if (valor === '') { alert('Digite um valor.'); return; }
-
   const ficha = fichas[fichaAtiva];
+  
   if (Array.isArray(ficha[indiceAtributoSendoEditado])) {
-    ficha[indiceAtributoSendoEditado][0] = parseInt(valor, 10) || 0;
+    const inputAtual = document.getElementById('modal-atributo-entrada-atual');
+    const inputTotal = document.getElementById('modal-atributo-entrada-total');
+    
+    if (!inputAtual || !inputTotal || inputAtual.value === '' || inputTotal.value === '') {
+      alert('Digite valores válidos.');
+      return;
+    }
+    
+    ficha[indiceAtributoSendoEditado][0] = parseInt(inputAtual.value, 10) || 0;
+    ficha[indiceAtributoSendoEditado][1] = parseInt(inputTotal.value, 10) || 0;
   } else {
+    const input = document.getElementById('modal-atributo-entrada');
+    const valor = input.value.trim();
+    
+    if (valor === '') {
+      alert('Digite um valor.');
+      return;
+    }
+    
     ficha[indiceAtributoSendoEditado] = isNaN(valor) ? valor : parseInt(valor, 10);
   }
+  
   salvarFicha();
   mostrarAtributos();
   fecharModal('modal-atributo');
@@ -351,11 +409,21 @@ function abrirModalRemoverAtributo() {
     opt.textContent = capitalizar(chave);
     select.appendChild(opt);
   });
+  
+  if (select.options.length === 0) {
+    alert('Não há atributos para remover (exceto o nome).');
+    return;
+  }
+  
   abrirModal('modal-remover-atributo');
 }
 
 function removerAtributo() {
   const chave = document.getElementById('select-remover-atributo').value;
+  if (chave === 'nome') {
+    alert('Não é possível remover o atributo "nome".');
+    return;
+  }
   if (chave && fichas[fichaAtiva][chave] !== undefined) {
     delete fichas[fichaAtiva][chave];
     salvarFicha();
@@ -363,6 +431,61 @@ function removerAtributo() {
     mostrarAtributos();
     preencherSelectAtributos();
     fecharModal('modal-remover-atributo');
+  }
+}
+
+function fichaAnterior() {
+  if (fichaAtiva > 0) {
+    fichaAtiva--;
+    preencherSelectAtributos();
+    gerarControlesArrays();
+    mostrarAtributos();
+  }
+}
+
+function proximaFicha() {
+  if (fichaAtiva < fichas.length - 1) {
+    fichaAtiva++;
+    preencherSelectAtributos();
+    gerarControlesArrays();
+    mostrarAtributos();
+  }
+}
+
+function criarFicha() {
+  fichaAtiva = fichas.length;
+  fichas.push({'nome': null, 'vida': [null, null]})
+  abrirModalFichaCompleta()
+}
+
+let certeza = 0
+
+function deletarFicha() {
+  const botao = document.getElementById("botao-deletar");
+  certeza++;
+  if (certeza == 1) {
+    botao.classList.add('botao-certeza');
+  }
+  if (certeza == 2) {
+    certeza = 0;
+    botao.classList.remove('botao-certeza');
+    
+    fichas.splice(fichaAtiva, 1);
+    
+    if (fichas.length === 0) {
+      fichaAtiva = 0;
+      fichas.push({'nome': '', 'vida': [0, 0]});
+      salvarFicha();
+      abrirModalFichaCompleta();
+    } else {
+      if (fichaAtiva >= fichas.length) {
+        fichaAtiva = fichas.length - 1;
+      }
+      salvarFicha();
+      preencherSelectAtributos();
+      gerarControlesArrays();
+      mostrarAtributos();
+    }
   }
 }
 
@@ -403,11 +526,15 @@ const app = {
   abrirModalRemoverAtributo,
   removerAtributo,
   toggleModoReordenar,
+  fichaAnterior,
+  proximaFicha,
+  criarFicha,
+  deletarFicha
 };
 
 (function init() {
   const fichaExiste = carregarFicha();
-  if (!fichaExiste || !fichas[fichaAtiva]) {
+  if (!fichaExiste || fichas.length === 0 || !fichas[fichaAtiva]) {
     abrirModalFichaCompleta();
   } else {
     preencherSelectAtributos();
