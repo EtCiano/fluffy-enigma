@@ -21,7 +21,7 @@
           </div>
           <div class="botoes-cabecalho">
             <button onclick="app.abrirModalAdicionaratributo()">+ Atributo</button>
-            <button onclick="app.abrirModalRemoverAtributo()">− Atributo</button>
+            <button id="btn-modo-edicao" onclick="app.toggleModoReordenar()">deletar/ordenar atributos</button>
           </div>
         </div>
 
@@ -49,10 +49,37 @@
         <button onclick="app.abrirModalFichaCompleta()">Alterar Ficha</button>
       </fieldset>
 
-      <!-- Reordenar atributos -->
-      <fieldset id="frame-reordenar-atributos">
-        <legend>Reordenar Atributos</legend>
-        <button onclick="app.toggleModoReordenar()">Modo Reordenar</button>
+      <!-- Dados -->
+      <fieldset id="dados-field">
+        <legend>Dados</legend>
+        <div class="dados-div">
+          <button id="dados1" class="dados">1d3</button>
+          <button id="dados2" class="dados">1d6</button>
+          <button id="dados3" class="dados">1d8</button>
+          <button id="dados4" class="dados">1d10</button>
+          <button id="dados5" class="dados">1d12</button>
+          <button id="dados6" class="dados">1d20</button>
+          <button id="dados7" class="dados">1d100</button>
+        </div>
+        <div class="dados-div">
+          <div id="resultado" class="dados">...</div>
+          <input type="text" placeholder="quantidade" id="quantidade-dados" class="dados">
+          <input type="text" placeholder="modificador" id="modificador" class="dados">
+        </div>
+        <div class="dados-opcoes">
+          <section class="dados">
+            <label for="normal">Normal: </label>
+            <input type="radio" class="checkbox" id="normal" name="tipo" checked>
+          </section>
+          <section class="dados">
+            <label for="vantagem">Vantagem: </label>
+            <input type="radio" class="checkbox" id="vantagem" name="tipo">
+          </section>
+          <section class="dados">
+            <label for="desvantagem">Desvantagem: </label>
+            <input type="radio" class="checkbox" id="desvantagem" name="tipo">
+          </section>
+        </div>
       </fieldset>
 
       <!-- Deletar ficha atual-->
@@ -96,20 +123,24 @@
       <label for="nome-novo-atributo">Nome do Novo Atributo</label>
       <input type="text" id="nome-novo-atributo" placeholder="Nome">
 
-      <label for="valor-novo-atributo">Valor do Novo Atributo</label>
-      <input type="number" id="valor-novo-atributo" placeholder="Valor">
-      <div id="container-array" style="display: none;">
+      <label for="valor-novo-atributo" class="valor-novo-atributo">Valor do Novo Atributo</label>
+      <div id="container-valor">
+        <input type="number" id="valor-novo-atributo" placeholder="Valor">
+      </div>
+      <div id="container-array" class="campo-barra" style="display: none;">
+        <input type="number" id="valor-novo-atributo-atual" placeholder="Valor Atual">
+        /
         <input type="number" id="valor-novo-atributo-max" placeholder="Valor Máximo">
       </div>
 
       <div class="checkbox-linha">
         <label for="atributo-novo-texto">Atributo é um Texto</label>
-        <input type="checkbox" id="atributo-novo-texto">
+        <input type="checkbox" class="checkbox" id="atributo-novo-texto">
       </div>
 
       <div class="checkbox-linha">
         <label for="atributo-novo-array">Atributo Tem um valor total e um atual</label>
-        <input type="checkbox" id="atributo-novo-array">
+        <input type="checkbox" class="checkbox" id="atributo-novo-array">
       </div>
       
       <div class="modal-botoes">
@@ -134,6 +165,7 @@
    </div>
 
   <script src="js/fichas.js"></script>
+  <script src="js/dados.js  "></script>
   <script>
     const checkTexto = document.getElementById('atributo-novo-texto');
     const checkArray = document.getElementById('atributo-novo-array');
@@ -149,10 +181,13 @@
       if (checkTexto.checked) {
         inputValor.type = 'text';
         inputValor.placeholder = 'Texto';
+        document.getElementById('container-valor').style.display = 'block';
         containerArray.style.display = 'none';
       } else {
         inputValor.type = 'number';
         inputValor.placeholder = 'Valor';
+        document.getElementById('container-valor').style.display = 'block';
+        containerArray.style.display = 'none';
       }
     });
 
@@ -163,11 +198,10 @@
         return;
       }
       if (checkArray.checked) {
-        inputValor.type = 'number';
-        inputValor.placeholder = 'Valor Atual';
-        containerArray.style.display = 'block';
+        document.getElementById('container-valor').style.display = 'none';
+        containerArray.style.display = 'flex';
       } else {
-        inputValor.placeholder = 'Valor';
+        document.getElementById('container-valor').style.display = 'block';
         containerArray.style.display = 'none';
       }
     });
