@@ -1,1 +1,255 @@
-/* Aqui ficará o Css principal do novo site */
+/* #region index.html */
+/* Estilos do index.html virão aqui */
+/* #endregion */
+
+/* #region adminDeFicha.html */
+
+/* ── Layout básico ──────────────────────────────────────────────────────────── */
+
+#app {
+display: flex;
+gap: 20px;
+padding: 20px;
+}
+
+#ficha-atributos {
+  width: 70%;
+}
+
+#frame-atributos {
+flex: 1;
+min-width: 0;
+}
+
+#frame-controles {
+display: flex;
+flex-direction: column;
+gap: 12px;
+width: 30%;
+flex-shrink: 0;
+}
+
+#controles-arrays {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+/* Telas pequenas: ficha em cima, controles embaixo, coluna única */
+@media (max-width: 420px) {
+#app {
+  flex-direction: column;
+  padding: 12px;
+  gap: 16px;
+}
+
+#ficha-atributos {
+  width: 100%;
+}
+
+#frame-controles {
+  width: 100%;
+}
+}
+
+/* ── Cabeçalho da ficha ───────────────────────────────────────────────────── */
+
+#cabecalho-ficha {
+display: flex;
+align-items: center;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+#cabecalho-ficha h2 {
+margin: 0;
+}
+
+.botoes-cabecalho {
+display: flex;
+gap: 6px;
+}
+
+/* ── Atributos ─────────────────────────────────────────────────────────────── */
+
+.atributo {
+display: flex;
+justify-content: space-between;
+margin: 4px 0;
+}
+
+/* ── Controles ─────────────────────────────────────────────────────────────── */
+
+fieldset {
+display: flex;
+flex-direction: column;
+gap: 8px;
+max-width: 100%;
+min-width: 0;
+box-sizing: border-box;
+}
+
+fieldset input,
+fieldset select,
+fieldset button {
+width: 100%;
+box-sizing: border-box;
+}
+
+/* ── Modais ────────────────────────────────────────────────────────────────── */
+
+.modal {
+position: fixed;
+inset: 0;
+background: rgba(0, 0, 0, 0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.modal[hidden] {
+display: none;
+}
+
+.modal-conteudo {
+background: #fff;
+padding: 24px;
+min-width: 280px;
+max-width: 90vw;
+width: 500px;
+max-height: 80vh;
+overflow-y: auto;
+display: flex;
+flex-direction: column;
+gap: 10px;
+box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+.modal-conteudo {
+  width: 90vw;
+  padding: 16px;
+  min-width: 0;
+}
+}
+
+#modal-ficha-campos {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+#modal-ficha-campos label {
+font-weight: 500;
+margin-top: 8px;
+}
+
+#modal-ficha-campos input,
+#modal-ficha-campos select {
+width: 100%;
+box-sizing: border-box;
+padding: 8px;
+}
+
+.campo-barra {
+display: flex;
+gap: 8px;
+align-items: center;
+flex-wrap: wrap;
+}
+
+.campo-barra input {
+flex: 1;
+min-width: 80px;
+box-sizing: border-box;
+padding: 8px;
+}
+
+@media (max-width: 400px) {
+.campo-barra {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.campo-barra input {
+  width: 100%;
+}
+}
+
+.modal-botoes {
+display: flex;
+gap: 8px;
+justify-content: flex-end;
+flex-wrap: wrap;
+margin-top: 8px;
+}
+
+.modal-botoes button {
+padding: 8px 16px;
+min-width: 80px;
+}
+
+@media (max-width: 400px) {
+.modal-botoes {
+  flex-direction: column;
+}
+
+.modal-botoes button {
+  width: 100%;
+}
+}
+
+.checkbox-linha {
+display: flex;
+align-items: center;
+gap: 8px;
+flex-direction: row-reverse;
+justify-content: flex-end;
+padding: 4px 0;
+}
+
+.checkbox-linha label {
+flex: 1;
+}
+
+@media (max-width: 400px) {
+.checkbox-linha {
+  font-size: 14px;
+}
+}
+
+.atributo.reordenavel {
+cursor: grab;
+background: #f9f9f9;
+padding: 8px;
+margin: 8px 0;
+border: 2px solid #ddd;
+border-radius: 4px;
+transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.atributo.reordenavel:hover {
+background: #f0f0f0;
+border-color: #999;
+}
+
+.atributo.arrastando {
+opacity: 0.35;
+cursor: grabbing;
+}
+
+.atributo.drag-over {
+border-color: #4CAF50;
+background: #e8f5e9;
+}
+
+.deletar-field {
+  color: red;
+}
+
+.botao-certeza {
+  background: #ff5e5e;
+  color: black;
+}
+
+/* #endregion */
