@@ -4,16 +4,12 @@ const desvantagem = document.getElementById('desvantagem');
 
 const dados = [];
 for (let i = 1; i <= 7; i++) {
-    const dado = document.getElementById(`dado${i}`);
+    const dado = document.getElementById(`dados${i}`);
     dados.push(dado);
 }
-const input1 = document.getElementById('input');
+const input1 = document.getElementById('quantidade-dados');
 const input2 = document.getElementById('modificador');
-const resultados = [];
-for (let i = 1; i <= 7; i++) {
-    const resultado = document.getElementById(`resultado${i}`);
-    resultados.push(resultado);
-}
+const resultado = document.getElementById('resultado');
 
 dados.forEach((dado, index) => {
     dado.addEventListener('click', () => {
@@ -33,27 +29,27 @@ dados.forEach((dado, index) => {
             for (let i = 0; i < quantidade; i++) {
                 total += (Math.floor(Math.random() * lados) + 1 + (parseInt(input2.value) || 0));
             }
-            resultados[index].textContent = total;
+            resultado.textContent = total;
             return;
         }
         else if (vantagem.checked) {
-            let total = 0;
+            let roladas = []
             for (let i = 0; i < quantidade; i++) {
-                const roll1 = Math.floor(Math.random() * lados) + 1;
-                const roll2 = Math.floor(Math.random() * lados) + 1;
-                total += (Math.max(roll1, roll2) + (parseInt(input2.value) || 0));
+                const roll = Math.floor(Math.random() * lados) + 1;
+                roladas.push(roll)
             }
-            resultados[index].textContent = total;
+            resultado_vantagem = Math.max(...roladas)
+            resultado.textContent = resultado_vantagem;
             return;
         }
         else if (desvantagem.checked) {
-            let total = 0;
+            let roladas = []
             for (let i = 0; i < quantidade; i++) {
-                const roll1 = Math.floor(Math.random() * lados) + 1;
-                const roll2 = Math.floor(Math.random() * lados) + 1;
-                total += (Math.min(roll1, roll2) + (parseInt(input2.value) || 0));
+                const roll = Math.floor(Math.random() * lados) + 1;
+                roladas.push(roll)
             }
-            resultados[index].textContent = total;
+            resultado_vantagem = Math.min(...roladas)
+            resultado.textContent = resultado_vantagem;
             return;
         }
     });
