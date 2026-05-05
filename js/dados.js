@@ -1,56 +1,53 @@
-const normal = document.getElementById('normal');
-const vantagem = document.getElementById('vantagem');
-const desvantagem = document.getElementById('desvantagem');
+// ─── Dados ────────────────────────────────────────────────────────────────────
 
-const dados = [];
-for (let i = 1; i <= 7; i++) {
-    const dado = document.getElementById(`dados${i}`);
-    dados.push(dado);
+function rolarDado(lados) {
+  const quantidade = parseInt(document.getElementById('quantidade-dados').value) || 1;
+  const modificador = parseInt(document.getElementById('modificador').value) || 0;
+  const normal = document.getElementById('normal').checked;
+  const vantagem = document.getElementById('vantagem').checked;
+  const desvantagem = document.getElementById('desvantagem').checked;
+  const resultado = document.getElementById('resultado');
+
+  if (normal) {
+    let total = 0;
+    for (let i = 0; i < quantidade; i++) {
+      total += Math.floor(Math.random() * lados) + 1;
+    }
+    resultado.textContent = total + modificador;
+  } else if (vantagem) {
+    let roladas = [];
+    for (let i = 0; i < quantidade; i++) {
+      roladas.push(Math.floor(Math.random() * lados) + 1);
+    }
+    resultado.textContent = Math.max(...roladas) + modificador;
+  } else if (desvantagem) {
+    let roladas = [];
+    for (let i = 0; i < quantidade; i++) {
+      roladas.push(Math.floor(Math.random() * lados) + 1);
+    }
+    resultado.textContent = Math.min(...roladas) + modificador;
+  }
 }
-const input1 = document.getElementById('quantidade-dados');
-const input2 = document.getElementById('modificador');
-const resultado = document.getElementById('resultado');
 
-dados.forEach((dado, index) => {
-    dado.addEventListener('click', () => {
-        const quantidade = input1.value || 1;
-        let lados;
-        switch (index) {
-            case 0: lados = 4; break;
-            case 1: lados = 6; break;
-            case 2: lados = 8; break;
-            case 3: lados = 10; break;
-            case 4: lados = 12; break;
-            case 5: lados = 20; break;
-            case 6: lados = 100; break;
-        }
-        if (normal.checked) {
-            let total = 0;
-            for (let i = 0; i < quantidade; i++) {
-                total += (Math.floor(Math.random() * lados) + 1 + (parseInt(input2.value) || 0));
-            }
-            resultado.textContent = total;
-            return;
-        }
-        else if (vantagem.checked) {
-            let roladas = []
-            for (let i = 0; i < quantidade; i++) {
-                const roll = Math.floor(Math.random() * lados) + 1;
-                roladas.push(roll)
-            }
-            resultado_vantagem = Math.max(...roladas)
-            resultado.textContent = resultado_vantagem;
-            return;
-        }
-        else if (desvantagem.checked) {
-            let roladas = []
-            for (let i = 0; i < quantidade; i++) {
-                const roll = Math.floor(Math.random() * lados) + 1;
-                roladas.push(roll)
-            }
-            resultado_vantagem = Math.min(...roladas)
-            resultado.textContent = resultado_vantagem;
-            return;
-        }
-    });
-});
+const appDados = {
+  rolarDado
+};
+
+(function init() {
+  const dados = [
+    { id: 'dados1', lados: 3 },
+    { id: 'dados2', lados: 6 },
+    { id: 'dados3', lados: 8 },
+    { id: 'dados4', lados: 10 },
+    { id: 'dados5', lados: 12 },
+    { id: 'dados6', lados: 20 },
+    { id: 'dados7', lados: 100 }
+  ];
+
+  dados.forEach(dado => {
+    const btn = document.getElementById(dado.id);
+    if (btn) {
+      btn.onclick = () => appDados.rolarDado(dado.lados);
+    }
+  });
+})();
