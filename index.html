@@ -82,6 +82,20 @@
         </div>
       </fieldset>
 
+      <!-- Iniciativas -->
+      <fieldset>
+        <div id="iniciativa-menor-div" class="iniciativa-div">
+          <input type="number" id="iniciativa-input" placeholder="Iniciativa">
+          <input type="text" id="iniciativa-nome" placeholder="nome">
+          <button id="adicionar-button">+</button>
+          <button id="limpar-button">-</button>
+        </div>
+        <div id="iniciativa-maior-div" class="iniciativa-div">
+          <div id="lista-iniciativa"></div>
+          <button id="iniciativa-proximo-button">próximo</button>
+        </div>
+      </fieldset>
+
       <!-- Deletar ficha atual-->
       <fieldset id="frame-reordenar-atributos">
         <legend class="deletar-field">Deletar ficha atual</legend>
@@ -166,6 +180,7 @@
 
   <script src="js/fichas.js"></script>
   <script src="js/dados.js  "></script>
+  <script src="js/iniciativa.js"></script>
   <script>
     const checkTexto = document.getElementById('atributo-novo-texto');
     const checkArray = document.getElementById('atributo-novo-array');
