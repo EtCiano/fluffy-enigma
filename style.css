@@ -135,6 +135,47 @@ align-items: center;
 gap: 4px;
 }
 
+.iniciativa-div {
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+}
+
+#iniciativa-maior-div {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+#iniciativa-menor-div {
+  display: flex;
+  gap: 4px;
+}
+
+#iniciativa-menor-div input {
+  flex: 1;
+}
+
+#iniciativa-proximo-button {
+  flex-shrink: 0;
+  width: 30%;
+}
+
+#iniciativa-menor-div button {
+  flex-shrink: 0;
+  width: calc((30% - 4px) / 2);
+}
+
+#lista-iniciativa {
+  width: 70%;
+  border: 1px solid gray;
+  background-color: white;
+  border-radius: 3px;
+  min-height: 60px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 /* ── Modais ────────────────────────────────────────────────────────────────── */
 
 .modal {
@@ -310,6 +351,13 @@ color: red;
 .botao-certeza {
 background: #ff5e5e;
 color: black;
+}
+
+.current-turn {
+background: #333;
+color: white;
+font-weight: bold;
+padding: 5px 10px;
 }
 
 /* #endregion */
