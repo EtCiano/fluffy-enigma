@@ -31,6 +31,11 @@ width: 40%;
 flex-shrink: 0;
 }
 
+#fundo {
+  z-index: -1;
+  position: fixed;
+}
+
 #controles-arrays {
 display: flex;
 flex-direction: column;
@@ -90,6 +95,7 @@ max-width: 100%;
 /* ── Controles ─────────────────────────────────────────────────────────────── */
 
 fieldset {
+  background-color: white;
 display: flex;
 flex-direction: column;
 gap: 8px;
@@ -133,6 +139,13 @@ margin-top: 8px;
 display: flex;
 align-items: center;
 gap: 4px;
+}
+
+#grid-calc {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  gap: 8px;
 }
 
 .iniciativa-div {
