@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <canvas id="fundo"></canvas>
   <div id="app">
 
     <div id="ficha-atributos">
@@ -53,7 +54,7 @@
       <fieldset id="dados-field">
         <legend>Dados</legend>
         <div class="dados-div">
-          <button id="dados1" class="dados">1d3</button>
+          <button id="dados1" class="dados">1d4</button>
           <button id="dados2" class="dados">1d6</button>
           <button id="dados3" class="dados">1d8</button>
           <button id="dados4" class="dados">1d10</button>
@@ -79,6 +80,34 @@
             <label for="desvantagem">Desvantagem: </label>
             <input type="radio" class="checkbox" id="desvantagem" name="tipo">
           </section>
+        </div>
+      </fieldset>
+
+      <!-- Calculadora -->
+      <fieldset>
+        <legend>Calculadora</legend>
+        <input id="tela-calculadora" type="text" placeholder="2+2=5"></input>
+        <div id="grid-calc">
+          <button class="btn-calc" onclick="appCalc.addCalc('(')">(</button>
+          <button class="btn-calc" onclick="appCalc.addCalc(')')">)</button>
+          <button class="btn-calc" onclick="appCalc.tirarCalc()"><=</button>
+          <button class="btn-calc" onclick="appCalc.limparCalc()">CE</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('1')">1</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('2')">2</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('3')">3</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('*')">*</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('4')">4</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('5')">5</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('6')">6</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('+')">+</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('7')">7</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('8')">8</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('9')">9</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('-')">-</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('.')">.</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('0')">0</button>
+          <button class="btn-calc" onclick="appCalc.addCalc('/')">/</button>
+          <button class="btn-calc"  onclick="appCalc.executarCalc()">=</button>
         </div>
       </fieldset>
 
@@ -182,6 +211,8 @@
   <script src="js/fichas.js"></script>
   <script src="js/dados.js  "></script>
   <script src="js/iniciativa.js"></script>
+  <script src="js/fundo.js"></script>
+  <script src="js/calculadora.js"></script>
   <script>
     const checkTexto = document.getElementById('atributo-novo-texto');
     const checkArray = document.getElementById('atributo-novo-array');
