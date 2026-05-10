@@ -189,6 +189,11 @@ gap: 4px;
   overflow-y: auto;
 }
 
+#importar-div {
+  display: flex;
+  gap: 8px;
+}
+
 /* ── Modais ────────────────────────────────────────────────────────────────── */
 
 .modal {
@@ -214,7 +219,7 @@ max-height: 80vh;
 overflow-y: auto;
 display: flex;
 flex-direction: column;
-gap: 10px;
+gap: 20px;
 box-sizing: border-box;
 }
 
@@ -241,7 +246,7 @@ padding: 8px;
 font-weight: 500;
 }
 
-#modal-ficha-campos {
+#modal-ficha-campos, #modal-ficha-campos-primeira {
   display: flex;
   flex-direction: column;
   gap: 10px;
