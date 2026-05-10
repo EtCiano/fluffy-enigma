@@ -339,6 +339,58 @@ function abrirModalFichaCompleta() {
   abrirModal('modal-ficha');
 }
 
+function abrirModalPrimeiraVez() {
+  const container = document.getElementById('modal-ficha-campos-primeira');
+  container.innerHTML = '';
+
+  const ficha = fichas[fichaAtiva] || {};
+
+  Object.keys(ficha).forEach((chave) => {
+    const valor = ficha[chave];
+    const label = document.createElement('label');
+    label.textContent = capitalizar(chave);
+
+    if (Array.isArray(valor)) {
+      const div = document.createElement('div');
+      div.className = 'campo-barra';
+
+      const iAtual = document.createElement('input');
+      iAtual.type  = 'number';
+      iAtual.id    = `ficha-campo-${chave}-atual`;
+      iAtual.value = valor[0];
+      iAtual.placeholder = 'Atual';
+
+      const iTotal = document.createElement('input');
+      iTotal.type  = 'number';
+      iTotal.id    = `ficha-campo-${chave}-total`;
+      iTotal.value = valor[1];
+      iTotal.placeholder = 'Total';
+
+      div.appendChild(iAtual);
+      div.appendChild(document.createTextNode(' / '));
+      div.appendChild(iTotal);
+
+      container.appendChild(label);
+      container.appendChild(div);
+    } else {
+      const input = document.createElement('input');
+      if (chave === 'nome') {
+        input.type = 'text';
+      } else {
+        input.type = isNaN(valor) ? 'text' : 'number';
+      }
+      input.id    = `ficha-campo-${chave}`;
+      input.value = valor ?? '';
+      input.placeholder = capitalizar(chave);
+
+      container.appendChild(label);
+      container.appendChild(input);
+    }
+  });
+
+  abrirModal('modal-ficha-primeira');
+}
+
 function salvarFichaCompleta() {
   const novaFicha = {};
   const ficha = fichas[fichaAtiva] || {};
@@ -362,6 +414,7 @@ function salvarFichaCompleta() {
   mostrarAtributos();
   preencherSelectAtributos();
   fecharModal('modal-ficha');
+  fecharModal('modal-ficha-primeira')
 }
 
 function abrirModalAdicionaratributo() {
@@ -446,12 +499,22 @@ function fichaAnterior() {
     preencherSelectAtributos();
     gerarControlesArrays();
     mostrarAtributos();
+  } else {
+    fichaAtiva = fichas.length - 1;
+    preencherSelectAtributos();
+    gerarControlesArrays();
+    mostrarAtributos();
   }
 }
 
 function proximaFicha() {
   if (fichaAtiva < fichas.length - 1) {
     fichaAtiva++;
+    preencherSelectAtributos();
+    gerarControlesArrays();
+    mostrarAtributos();
+  } else {
+    fichaAtiva = 0;
     preencherSelectAtributos();
     gerarControlesArrays();
     mostrarAtributos();
@@ -502,6 +565,65 @@ function toggleModoReordenar() {
   mostrarAtributos();
 }
 
+function exportarFicha() {
+  const nomeArquivo = `ficha_${(fichas[fichaAtiva].nome).normalize("NFD")
+                                                        .replace(/[\u0300-\u036f]/g, "")
+                                                        .split(' ')
+                                                        .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
+                                                        .join('')}`;
+  
+  const conteudo = Object.entries(fichas[fichaAtiva])
+    .map(([chave, valor]) => `${chave}: ${valor}`)
+    .join('\n');
+
+  const blob = new Blob([conteudo], { type: 'text/plain' });
+  
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = nomeArquivo;
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function importarFicha() {
+  const fileInput = document.getElementById('fileInput')
+  fileInput.click()
+
+  fileInput.addEventListener('change', (event) => {
+  const arquivo = event.target.files[0];
+
+  if (arquivo) {
+    const leitor = new FileReader();
+
+    let fichaImportada = {};
+    leitor.onload = (e) => {
+      let conteudo_linhas = e.target.result.split('\n');
+      conteudo_linhas.forEach(linha => {
+        linhaFormatada = linha.replace(" ", "").split(":")
+        if (isStringInt(linhaFormatada[1])) {
+          fichaImportada[linhaFormatada[0]] = parseInt(linhaFormatada[1], 10);
+        } else if (linhaFormatada[1].includes(",")) {
+          fichaImportada[linhaFormatada[0]] = linhaFormatada[1].split(",").map(element => parseInt(element, 10));
+        } else {
+          fichaImportada[linhaFormatada[0]] = linhaFormatada[1];
+        }
+      });
+
+      fichas.push(fichaImportada);
+      fichaAtiva = fichas.indexOf(fichaImportada);
+
+      gerarControlesArrays();
+      mostrarAtributos();
+      preencherSelectAtributos();
+      salvarFicha();
+    };
+
+    leitor.readAsText(arquivo);
+  }
+});
+}
 // ─── Modais ───────────────────────────────────────────────────────────────────
 
 function abrirModal(id)  { document.getElementById(id).hidden = false; }
@@ -520,6 +642,16 @@ function capitalizar(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function isStringInt(str) {
+  return /^-?\d+$/.test(str);
+}
+
+function debugarFicha() {
+  console.log(fichas)
+  console.log(fichaAtiva)
+  console.log(JSON.stringify(fichas, null, 2));
+}
+
 // ─── Inicialização ────────────────────────────────────────────────────────────
 
 const app = {
@@ -527,6 +659,7 @@ const app = {
   abrirModalAtributo,
   salvarAtributo,
   abrirModalFichaCompleta,
+  abrirModalPrimeiraVez,
   salvarFichaCompleta,
   fecharModal,
   abrirModalAdicionaratributo,
@@ -537,13 +670,15 @@ const app = {
   fichaAnterior,
   proximaFicha,
   criarFicha,
+  exportarFicha,
+  importarFicha,
   deletarFicha
 };
 
 (function init() {
   const fichaExiste = carregarFicha();
   if (!fichaExiste || fichas.length === 0 || !fichas[fichaAtiva]) {
-    abrirModalFichaCompleta();
+    abrirModalPrimeiraVez();
   } else {
     preencherSelectAtributos();
     gerarControlesArrays();
