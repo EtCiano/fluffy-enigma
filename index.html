@@ -126,6 +126,15 @@
         </div>
       </fieldset>
 
+      <fieldset>
+        <legend>Importar/Exportar Ficha</legend>
+        <div id="importar-div">
+          <button id="exportar-btn" onclick="app.exportarFicha()">Exportar</button>
+          <input type="file" id="fileInput" style="display: none;" accept=".txt">
+          <button id="importar-btn" onclick="app.importarFicha()">Importar</button>
+        </div>
+      </fieldset>
+
       <!-- Deletar ficha atual-->
       <fieldset id="frame-reordenar-atributos">
         <legend class="deletar-field">Deletar ficha atual</legend>
@@ -156,6 +165,25 @@
       <div class="modal-botoes">
         <button onclick="app.salvarFichaCompleta()">OK</button>
         <button onclick="app.fecharModal('modal-ficha')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: editar ficha completa pela primeira vez -->
+
+  <div id="modal-ficha-primeira" class="modal" hidden>
+    <div class="modal-conteudo">
+      <div>
+        <h4>Bem-vindo ao Lagartixo</h4>
+        <p>Lagartixo é uma coleção de ferramentas feitas para jogadores e mestres de RPG, feitas para organizar e optimizar o máximo possível suas sessões.</p>
+      </div>
+      <div>
+        <h3>Criar Ficha</h3>
+        <div id="modal-ficha-campos-primeira"></div>
+        <div class="modal-botoes">
+        <button onclick="app.salvarFichaCompleta()">OK</button>
+        <button onclick="app.fecharModal('modal-ficha-primeira')">Cancelar</button>
+      </div>
       </div>
     </div>
   </div>
