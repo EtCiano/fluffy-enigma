@@ -126,7 +126,7 @@ function gerarControlesArrays() {
 
     const btn = document.createElement('button');
     btn.textContent = `Aplicar`;
-    btn.onclick = () => app.alterarAtributoValor(chave, document.getElementById(`entrada-${chave}`).value);
+    btn.onclick = () => appFichas.alterarAtributoValor(chave, document.getElementById(`entrada-${chave}`).value);
 
     fieldset.appendChild(input);
     fieldset.appendChild(btn);
@@ -573,7 +573,7 @@ function exportarFicha() {
                                                         .join('')}`;
   
   const conteudo = Object.entries(fichas[fichaAtiva])
-    .map(([chave, valor]) => `${chave}: ${valor}`)
+    .map(([chave, valor]) => `${chave}: ${Array.isArray(valor) ? valor.join("/") : valor}`)
     .join('\n');
 
   const blob = new Blob([conteudo], { type: 'text/plain' });
@@ -604,8 +604,8 @@ function importarFicha() {
         linhaFormatada = linha.replace(" ", "").split(":")
         if (isStringInt(linhaFormatada[1])) {
           fichaImportada[linhaFormatada[0]] = parseInt(linhaFormatada[1], 10);
-        } else if (linhaFormatada[1].includes(",")) {
-          fichaImportada[linhaFormatada[0]] = linhaFormatada[1].split(",").map(element => parseInt(element, 10));
+        } else if (linhaFormatada[1].includes("/")) {
+          fichaImportada[linhaFormatada[0]] = linhaFormatada[1].split("/").map(element => parseInt(element, 10));
         } else {
           fichaImportada[linhaFormatada[0]] = linhaFormatada[1];
         }
@@ -654,7 +654,7 @@ function debugarFicha() {
 
 // ─── Inicialização ────────────────────────────────────────────────────────────
 
-const app = {
+const appFichas = {
   alterarAtributoValor,
   abrirModalAtributo,
   salvarAtributo,
