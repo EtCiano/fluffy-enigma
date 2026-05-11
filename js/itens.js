@@ -1,4 +1,5 @@
 const indiceAtual = appFichas.fichaAtiva;
+const gridItens = document.getElementById('grid-itens');
 // const fichaAtual = appFichas.fichas[appFichas.fichaAtiva]; // não necessário até agora
 
 let itens = {
@@ -43,4 +44,32 @@ let categorias = {
     'equipamentos': ['nome', 'tipo', 'bonus', 'peso']
 }
 
-// esse comentário será visto no github
+
+Object.entries(itens).forEach(([chave, valor]) => {
+    const divCategoria = document.createElement('div');
+    divCategoria.classList.add('categoria-itens');
+    gridItens.appendChild(divCategoria);
+    divCategoria.innerHTML = `<h3>${chave}</h3>`;
+
+    const gridCategoria = document.createElement('div');
+    gridCategoria.classList.add('grid-categoria');
+    divCategoria.appendChild(gridCategoria);
+
+    gridCategoria.style.gridTemplateColumns = `repeat(${categorias[chave].length}, 1fr)`
+    
+    categorias[chave].forEach((nomeChave) => { // Cabeçalho
+        const divCabecalho = document.createElement('div');
+        divCabecalho.classList.add('itens', 'cabecalho');
+        gridCategoria.appendChild(divCabecalho);
+        divCabecalho.innerHTML = `<strong>${nomeChave}</strong>`;
+    });
+
+    valor.forEach((item, indice) => {
+        Object.entries(item).forEach(([chaveItem, valorItem]) => {
+            const divItem = document.createElement('div');
+            divItem.classList.add('itens');
+            gridCategoria.appendChild(divItem);
+            divItem.innerHTML = `${valorItem}`;
+        });
+    });
+});
