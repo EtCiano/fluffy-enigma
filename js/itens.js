@@ -42,3 +42,5 @@ let categorias = {
     'armas': ['nome', 'tipo', 'dano', 'peso'],
     'equipamentos': ['nome', 'tipo', 'bonus', 'peso']
 }
+
+// esse comentário será visto no github
