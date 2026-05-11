@@ -86,6 +86,30 @@ word-break: break-word;
 max-width: 100%;
 }
 
+/* ── Itens ─────────────────────────────────────────────────────────────────── */
+
+#div-lista-itens {
+  margin-top: 20px;
+}
+
+#grid-itens {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: auto;
+  gap: 5px;
+}
+
+#lista-itens-minimizavel {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#grid-itens div {
+  border: 2px gray solid;
+  height: 20px;
+}
+
 /* ── Controles ─────────────────────────────────────────────────────────────── */
 
 fieldset {

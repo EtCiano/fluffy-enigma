@@ -672,7 +672,9 @@ const appFichas = {
   criarFicha,
   exportarFicha,
   importarFicha,
-  deletarFicha
+  deletarFicha,
+  get fichaAtiva() { return fichaAtiva; },
+  get fichas() { return fichas; }
 };
 
 (function init() {
