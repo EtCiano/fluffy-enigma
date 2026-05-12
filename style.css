@@ -10,6 +10,7 @@ transition: ease-in-out all;
 
 #ficha-atributos {
   width: 70%;
+  min-width: 0;
 }
 
 #frame-atributos {
@@ -87,6 +88,9 @@ max-width: 100%;
 }
 
 /* ── Itens ─────────────────────────────────────────────────────────────────── */
+#field-itens * {
+  transition: all ease-in-out 0.2s;
+}
 
 #div-lista-itens {
   margin-top: 20px;
@@ -95,23 +99,65 @@ max-width: 100%;
 #grid-itens {
   margin-top: 8px;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 5px;
 }
+
+@media (max-width: 420px) {
+  #grid-itens {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 300px) {
+  #grid-itens {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .itens {
   border: 1px gray solid;
   border-radius: 2px;
-  height: 60px;
-  padding: 5px;
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   transition: all ease-in-out 0.2s;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.6rem;
+  padding: 0.3rem;
+  word-wrap: break-word;
+}
+
+.itens::before {
+  content: '';
+  display: block;
+  padding-bottom: 100%;
 }
 
 .itens:hover {
-  border-radius: 12px;
+  border-radius: 8px;
+}
+
+.itens.arrastando {
+  opacity: 0.35;
+}
+
+#btns-itens {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-itens {
+  width: auto;
+}
+
+#lista-itens-minimizavel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* ── Controles ─────────────────────────────────────────────────────────────── */
