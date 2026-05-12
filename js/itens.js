@@ -55,6 +55,7 @@ let cores = {
 }
 
 let indiceItemArrastando = null;
+let indiceItemVisivel = null;
 
 // ─── Persistência ─────────────────────────────────────────────────────────────
 
@@ -74,22 +75,28 @@ function carregarItens() {
 // ─── Ações ────────────────────────────────────────────────────────────────────
 
 let detalhesItem = [];
+let detalhesContainer = null;
+
+function popularCores(idSelect) {
+    const select = document.getElementById(idSelect);
+    select.innerHTML = '';
+    Object.entries(cores).forEach(([chave]) => {
+        const option = document.createElement('option');
+        option.value = chave;
+        option.textContent = chave;
+        select.appendChild(option);
+    });
+}
 
 function abrirModalAdicionarItem() {
     document.getElementById('item-nome').value = '';
     document.getElementById('item-valor').value = '';
     document.getElementById('item-tipo').value = '';
     document.getElementById('detalhes-item').innerHTML = '';
-    const coresDestaque = document.getElementById('item-cor')
-    coresDestaque.innerHTML = '';
-    Object.entries(cores).forEach(([chave, valor]) => {
-        const option = document.createElement('option');
-        option.value = chave;
-        option.textContent = chave;
-        coresDestaque.appendChild(option);
-    })
-    coresDestaque.value = 'padrao';
+    popularCores('item-cor');
+    document.getElementById('item-cor').value = 'padrao';
     detalhesItem = [];
+    detalhesContainer = document.getElementById('detalhes-item');
     abrirModal('modal-adicionar-item');
 }
 
@@ -129,14 +136,13 @@ function adicionarDetalhe() {
 
     detalhesItem.push(nome);
 
-    const container = document.getElementById('detalhes-item');
     const div = document.createElement('div');
     div.className = 'detalhe-item';
     div.innerHTML = `
         <label for="detalhe-${idParaNome(nome)}">${nome}</label>
         <input type="text" id="detalhe-${idParaNome(nome)}" placeholder="${nome}">
     `;
-    container.appendChild(div);
+    detalhesContainer.appendChild(div);
 
     fecharModal('modal-novo-detalhe');
     document.getElementById(`detalhe-${idParaNome(nome)}`).focus();
@@ -144,6 +150,81 @@ function adicionarDetalhe() {
 
 function idParaNome(str) {
     return str.replace(/[^a-zA-Z0-9À-ÿ]/g, '_');
+}
+
+const chavesBase = ['nome', 'valor', 'tipo', 'cor'];
+
+function abrirModalModificarItem() {
+    if (indiceItemVisivel === null) return;
+
+    const item = itens[indiceAtual][indiceItemVisivel];
+
+    document.getElementById('item-nome-modificar').value = item['nome'] || '';
+    document.getElementById('item-valor-modificar').value = item['valor'] ?? '';
+    document.getElementById('item-tipo-modificar').value = item['tipo'] || '';
+    popularCores('item-cor-modificar');
+    document.getElementById('item-cor-modificar').value = item['cor'] || 'padrao';
+
+    const container = document.getElementById('detalhes-item-modificar');
+    container.innerHTML = '';
+    detalhesItem = [];
+    detalhesContainer = container;
+
+    Object.entries(item).forEach(([chave, valor]) => {
+        if (chavesBase.includes(chave)) return;
+        detalhesItem.push(chave);
+        const div = document.createElement('div');
+        div.className = 'detalhe-item';
+        const label = document.createElement('label');
+        const id = `detalhe-${idParaNome(chave)}`;
+        label.htmlFor = id;
+        label.textContent = chave;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = id;
+        input.placeholder = chave;
+        input.value = String(valor ?? '');
+        div.appendChild(label);
+        div.appendChild(input);
+        container.appendChild(div);
+    });
+
+    document.getElementById('descricao-item').hidden = true;
+    abrirModal('modal-modificar-item');
+}
+
+function salvarModificarItem() {
+    if (indiceItemVisivel === null) return;
+
+    const nome = document.getElementById('item-nome-modificar').value.trim();
+    if (!nome) { alert('Digite um nome para o item.'); return; }
+
+    const item = {
+        nome: nome,
+        valor: document.getElementById('item-valor-modificar').value,
+        tipo: document.getElementById('item-tipo-modificar').value,
+        cor: document.getElementById('item-cor-modificar').value
+    };
+
+    detalhesItem.forEach(chave => {
+        const input = document.getElementById(`detalhe-${idParaNome(chave)}`);
+        item[chave] = input ? input.value : '';
+    });
+
+    itens[indiceAtual][indiceItemVisivel] = item;
+    salvarItens();
+    mostrarItens();
+    fecharModal('modal-modificar-item');
+}
+
+function deletarItem() {
+    if (indiceItemVisivel === null) return;
+
+    itens[indiceAtual].splice(indiceItemVisivel, 1);
+    indiceItemVisivel = null;
+    salvarItens();
+    mostrarItens();
+    document.getElementById('descricao-item').hidden = true;
 }
 
 // ─── Drag-and-drop para reordenar (API nativa HTML5) ─────────────────────────
@@ -198,32 +279,22 @@ gridItens.addEventListener('dragenter', (e) => e.preventDefault());
 function mostrarDescricao(indiceItem, event) {
     console.log(indiceItem, itens[indiceAtual][indiceItem]);
 
-    const descricaoAnterior = document.querySelector('.descricao-suspensa');
-    if (descricaoAnterior) descricaoAnterior.remove();
+    indiceItemVisivel = indiceItem;
 
-    const divDescricao = document.createElement('div');
-    divDescricao.classList.add('descricao-suspensa');
+    const descDiv = document.getElementById('descricao-item');
+    const desc = document.getElementById('descricao-item-interna');
 
     const item = itens[indiceAtual][indiceItem];
+
     let conteudoHTML = '';
     Object.entries(item).forEach(([chave, valor]) => {
         conteudoHTML += `<div><strong>${chave}:</strong> ${valor}</div>`;
     });
-    divDescricao.innerHTML = conteudoHTML;
+    desc.innerHTML = conteudoHTML;
 
-    divDescricao.style.left = `${event.pageX}px`;
-    divDescricao.style.top = `${event.pageY - 10}px`;
-
-    document.body.appendChild(divDescricao);
-
-    setTimeout(() => {
-        document.addEventListener('click', function removerDescricao(e) {
-            if (!divDescricao.contains(e.target)) {
-                divDescricao.remove();
-                document.removeEventListener('click', removerDescricao);
-            }
-        });
-    }, 0);
+    descDiv.style.left = `${event.pageX}px`;
+    descDiv.style.top = `${event.pageY - 10}px`;
+    descDiv.hidden = false;
 }
 
 function mostrarItens() {
@@ -251,7 +322,12 @@ function abrirModal(id)  { document.getElementById(id).hidden = false; }
 function fecharModal(id) { document.getElementById(id).hidden = true;  }
 
 document.addEventListener('click', (e) => {
-    ['modal-adicionar-item', 'modal-novo-detalhe'].forEach(id => {
+    const desc = document.getElementById('descricao-item');
+    if (!desc.hidden && !desc.contains(e.target) && !e.target.closest('.itens')) {
+        desc.hidden = true;
+    }
+
+    ['modal-adicionar-item', 'modal-novo-detalhe', 'modal-modificar-item'].forEach(id => {
         const modal = document.getElementById(id);
         if (modal && !modal.hidden && e.target === modal) modal.hidden = true;
     });
@@ -264,7 +340,10 @@ const appItens = {
     salvarItem,
     abrirModalNovoDetalhe,
     adicionarDetalhe,
-    fecharModal
+    fecharModal,
+    deletarItem,
+    abrirModalModificarItem,
+    salvarModificarItem
 }
 
 const ItensExiste = carregarItens();

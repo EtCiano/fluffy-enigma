@@ -558,6 +558,11 @@ function deletarFicha() {
       mostrarAtributos();
     }
   }
+  setTimeout(() => {
+    certeza = 0;
+    botao.classList.remove('botao-certeza');
+    botao.innerHTML = 'DELETAR'
+  }, 5000)
 }
 
 function toggleModoReordenar() {
