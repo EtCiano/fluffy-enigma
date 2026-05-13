@@ -103,13 +103,13 @@ max-width: 100%;
   gap: 5px;
 }
 
-@media (max-width: 420px) {
+@media (max-width: 500px) {
   #grid-itens {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (max-width: 300px) {
+@media (max-width: 400px) {
   #grid-itens {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -125,7 +125,7 @@ max-width: 100%;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: clamp(0.4rem, 2vw, 0.7rem);
   padding: 0.3rem;
   word-wrap: break-word;
 }
@@ -312,6 +312,45 @@ padding: 8px;
 
 .modal-conteudo label {
 font-weight: 500;
+}
+
+.detalhe-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detalhe-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detalhe-item-header label {
+  font-weight: 500;
+}
+
+#detalhes-item-modificar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.btn-remover-detalhe {
+  flex-shrink: 0;
+  width: auto !important;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4em;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+  padding: 0 4px !important;
+  line-height: 1;
+}
+
+.btn-remover-detalhe:hover {
+  opacity: 1;
 }
 
 #modal-ficha-campos, #modal-ficha-campos-primeira {

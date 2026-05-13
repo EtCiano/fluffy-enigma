@@ -73,7 +73,7 @@ function mostrarAtributos() {
     if (modoReordenar) {
       const btnDel = document.createElement('button');
       btnDel.className = 'btn-deletar-atributo';
-      btnDel.textContent = '🗑';
+      btnDel.textContent = '×';
       btnDel.title = `Remover ${capitalizar(chave)}`;
       btnDel.addEventListener('click', (e) => {
         e.stopPropagation();

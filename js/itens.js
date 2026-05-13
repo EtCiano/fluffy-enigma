@@ -3,35 +3,10 @@ const STORAGE_KEY_ITENS = 'itens'
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
-const indiceAtual = appFichas.fichaAtiva;
+let indiceAtual = appFichas.fichaAtiva;
 
 let itens = [
-    [
-        {
-            'nome': 'Poção de Vida',
-            'tipo': 'Consumível',
-            'efeito': '+20pv',
-            'quantidade': 3
-        },
-        {
-            'nome': 'Moedas',
-            'tipo': 'Tesouro',
-            'valor': 50,
-            'peso': 0
-        },
-        {
-            'nome': 'Espada Curta',
-            'tipo': 'Arma',
-            'dano': '1d6',
-            'peso': 3
-        },
-        {
-            'nome': 'Armadura de Couro',
-            'tipo': 'Equipamento',
-            'bonus': '+1pv',
-            'peso': 5
-        }
-    ]
+    []
 ]
 
 let cores = {
@@ -71,6 +46,32 @@ function carregarItens() {
   }
   return false;
 }
+
+function mudarItensFicha() {
+    if (indiceAtual > itens.length - 1) {
+        itens.push([])
+    }
+    mostrarItens()
+    salvarItens()
+}
+
+// ─── Interceptar troca de ficha ───────────────────────────────────────────────
+
+['fichaAnterior', 'proximaFicha', 'criarFicha', 'deletarFicha', 'importarFicha'].forEach(nome => {
+    const original = appFichas[nome];
+    if (typeof original !== 'function') return;
+    appFichas[nome] = function(...args) {
+        const result = original.apply(this, args);
+        const novoIndice = appFichas.fichaAtiva;
+        if (novoIndice !== indiceAtual) {
+            indiceAtual = novoIndice;
+            setTimeout(() => mudarItensFicha(), 0);
+        }
+        return result;
+    };
+});
+
+
 
 // ─── Ações ────────────────────────────────────────────────────────────────────
 
@@ -138,18 +139,35 @@ function adicionarDetalhe() {
 
     const div = document.createElement('div');
     div.className = 'detalhe-item';
+    const id = `detalhe-${idParaNome(nome)}`;
     div.innerHTML = `
-        <label for="detalhe-${idParaNome(nome)}">${nome}</label>
-        <input type="text" id="detalhe-${idParaNome(nome)}" placeholder="${nome}">
+        <div class="detalhe-item-header">
+            <label for="${id}">${nome}</label>
+            <button type="button" class="btn-remover-detalhe">×</button>
+        </div>
+        <input type="text" id="${id}" placeholder="${nome}">
     `;
+    div.querySelector('.btn-remover-detalhe').onclick = () => removerDetalhe(nome);
+
     detalhesContainer.appendChild(div);
 
     fecharModal('modal-novo-detalhe');
-    document.getElementById(`detalhe-${idParaNome(nome)}`).focus();
+    document.getElementById(id).focus();
 }
 
 function idParaNome(str) {
     return str.replace(/[^a-zA-Z0-9À-ÿ]/g, '_');
+}
+
+function removerDetalhe(nome) {
+    const idx = detalhesItem.indexOf(nome);
+    if (idx !== -1) detalhesItem.splice(idx, 1);
+
+    const input = document.getElementById(`detalhe-${idParaNome(nome)}`);
+    if (input) {
+        const div = input.closest('.detalhe-item');
+        if (div) div.remove();
+    }
 }
 
 const chavesBase = ['nome', 'valor', 'tipo', 'cor'];
@@ -175,17 +193,15 @@ function abrirModalModificarItem() {
         detalhesItem.push(chave);
         const div = document.createElement('div');
         div.className = 'detalhe-item';
-        const label = document.createElement('label');
         const id = `detalhe-${idParaNome(chave)}`;
-        label.htmlFor = id;
-        label.textContent = chave;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = id;
-        input.placeholder = chave;
-        input.value = String(valor ?? '');
-        div.appendChild(label);
-        div.appendChild(input);
+        div.innerHTML = `
+            <div class="detalhe-item-header">
+                <label for="${id}">${chave}</label>
+                <button type="button" class="btn-remover-detalhe">×</button>
+            </div>
+            <input type="text" id="${id}" placeholder="${chave}" value="${String(valor ?? '')}">
+        `;
+        div.querySelector('.btn-remover-detalhe').onclick = () => removerDetalhe(chave);
         container.appendChild(div);
     });
 
@@ -340,6 +356,7 @@ const appItens = {
     salvarItem,
     abrirModalNovoDetalhe,
     adicionarDetalhe,
+    removerDetalhe,
     fecharModal,
     deletarItem,
     abrirModalModificarItem,
