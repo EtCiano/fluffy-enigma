@@ -80,6 +80,9 @@ flex-wrap: wrap;
 justify-content: space-between;
 margin: 4px 0;
 gap: 4px;
+border: 1px gray solid;
+padding: 5px;
+box-sizing: border-box;
 }
 
 .atributo-valor {
