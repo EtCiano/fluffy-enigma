@@ -10,6 +10,7 @@ transition: ease-in-out all;
 
 #ficha-atributos {
   width: 70%;
+  min-width: 0;
 }
 
 #frame-atributos {
@@ -84,6 +85,79 @@ gap: 4px;
 .atributo-valor {
 word-break: break-word;
 max-width: 100%;
+}
+
+/* ── Itens ─────────────────────────────────────────────────────────────────── */
+#field-itens * {
+  transition: all ease-in-out 0.2s;
+}
+
+#div-lista-itens {
+  margin-top: 20px;
+}
+
+#grid-itens {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+@media (max-width: 500px) {
+  #grid-itens {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 400px) {
+  #grid-itens {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.itens {
+  border: 1px gray solid;
+  border-radius: 2px;
+  position: relative;
+  transition: all ease-in-out 0.2s;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(0.4rem, 2vw, 0.7rem);
+  padding: 0.3rem;
+  word-wrap: break-word;
+}
+
+.itens::before {
+  content: '';
+  display: block;
+  padding-bottom: 100%;
+}
+
+.itens:hover {
+  border-radius: 8px;
+}
+
+.itens.arrastando {
+  opacity: 0.35;
+}
+
+#btns-itens {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-itens {
+  width: auto;
+}
+
+#lista-itens-minimizavel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* ── Controles ─────────────────────────────────────────────────────────────── */
@@ -240,6 +314,45 @@ padding: 8px;
 font-weight: 500;
 }
 
+.detalhe-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detalhe-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detalhe-item-header label {
+  font-weight: 500;
+}
+
+#detalhes-item-modificar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.btn-remover-detalhe {
+  flex-shrink: 0;
+  width: auto !important;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4em;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+  padding: 0 4px !important;
+  line-height: 1;
+}
+
+.btn-remover-detalhe:hover {
+  opacity: 1;
+}
+
 #modal-ficha-campos, #modal-ficha-campos-primeira {
   display: flex;
   flex-direction: column;
@@ -370,4 +483,20 @@ background: #333;
 color: white;
 font-weight: bold;
 padding: 5px 10px;
+}
+
+.descricao-suspensa {
+  position: absolute;
+  background: white;
+  border: 2px solid gray;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transform: translateY(-100%);
+  min-width: 150px;
+}
+
+.descricao-suspensa div {
+  margin: 4px 0;
 }

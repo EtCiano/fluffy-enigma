@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'ficha';
+const STORAGE_KEY_FICHA = 'ficha';
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ let modoReordenar = false;
 // ─── Persistência ─────────────────────────────────────────────────────────────
 
 function carregarFicha() {
-  const salvo = localStorage.getItem(STORAGE_KEY);
+  const salvo = localStorage.getItem(STORAGE_KEY_FICHA);
   if (salvo) {
     fichas = JSON.parse(salvo);
     return true;
@@ -25,7 +25,7 @@ function carregarFicha() {
 }
 
 function salvarFicha() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(fichas));
+  localStorage.setItem(STORAGE_KEY_FICHA, JSON.stringify(fichas));
 }
 
 // ─── Renderização ─────────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ function mostrarAtributos() {
     if (modoReordenar) {
       const btnDel = document.createElement('button');
       btnDel.className = 'btn-deletar-atributo';
-      btnDel.textContent = '🗑';
+      btnDel.textContent = '×';
       btnDel.title = `Remover ${capitalizar(chave)}`;
       btnDel.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -558,6 +558,11 @@ function deletarFicha() {
       mostrarAtributos();
     }
   }
+  setTimeout(() => {
+    certeza = 0;
+    botao.classList.remove('botao-certeza');
+    botao.innerHTML = 'DELETAR'
+  }, 5000)
 }
 
 function toggleModoReordenar() {
@@ -672,7 +677,9 @@ const appFichas = {
   criarFicha,
   exportarFicha,
   importarFicha,
-  deletarFicha
+  deletarFicha,
+  get fichaAtiva() { return fichaAtiva; },
+  get fichas() { return fichas; }
 };
 
 (function init() {
