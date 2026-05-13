@@ -1,4 +1,5 @@
 const STORAGE_KEY_FICHA = 'ficha';
+const STORAGE_KEY_ORDEM = 'ordem_atributos';
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
@@ -9,6 +10,7 @@ let fichas = [
   }
 ];
 
+let ordensAtributos = [[]];
 let fichaAtiva = 0;
 let indiceAtributoSendoEditado = null;
 let modoReordenar = false;
@@ -19,6 +21,12 @@ function carregarFicha() {
   const salvo = localStorage.getItem(STORAGE_KEY_FICHA);
   if (salvo) {
     fichas = JSON.parse(salvo);
+    const salvoOrdem = localStorage.getItem(STORAGE_KEY_ORDEM);
+    if (salvoOrdem) {
+      ordensAtributos = JSON.parse(salvoOrdem);
+    } else {
+      ordensAtributos = fichas.map(f => Object.keys(f).filter(k => k !== 'nome'));
+    }
     return true;
   }
   return false;
@@ -26,6 +34,7 @@ function carregarFicha() {
 
 function salvarFicha() {
   localStorage.setItem(STORAGE_KEY_FICHA, JSON.stringify(fichas));
+  localStorage.setItem(STORAGE_KEY_ORDEM, JSON.stringify(ordensAtributos));
 }
 
 // ─── Renderização ─────────────────────────────────────────────────────────────
@@ -53,8 +62,11 @@ function mostrarAtributos() {
   nomeEl.textContent = ficha['nome'];
   listaEl.innerHTML  = '';
 
-  for (const [chave, valor] of Object.entries(ficha)) {
-    if (chave === 'nome') continue;
+  const ordem = ordensAtributos[fichaAtiva] || [];
+  const chaves = ordem.filter(k => ficha[k] !== undefined);
+  
+  for (const chave of chaves) {
+    const valor = ficha[chave];
 
     const item = document.createElement('div');
     item.className = 'atributo' + (modoReordenar ? ' reordenavel' : '');
@@ -152,15 +164,6 @@ function iniciarSortable(lista) {
     item.addEventListener('dragend', () => {
       item.classList.remove('arrastando');
       lista.querySelectorAll('.atributo').forEach(el => el.classList.remove('drag-over'));
-
-      // Salva a nova ordem na ficha
-      const ficha = fichas[fichaAtiva];
-      const novaOrdem = [...lista.querySelectorAll('.atributo')].map(el => el.dataset.chave);
-      const novaFicha = { nome: ficha['nome'] };
-      novaOrdem.forEach(chave => { novaFicha[chave] = ficha[chave]; });
-      fichas[fichaAtiva] = novaFicha;
-      salvarFicha();
-
       arrastando = null;
     });
 
@@ -451,6 +454,9 @@ function adicionarAtributo() {
     fichas[fichaAtiva][nome] = parseInt(document.getElementById('valor-novo-atributo').value, 10) || 0;
   }
 
+  if (!ordensAtributos[fichaAtiva]) ordensAtributos[fichaAtiva] = [];
+  ordensAtributos[fichaAtiva].push(nome);
+
   salvarFicha();
   gerarControlesArrays();
   mostrarAtributos();
@@ -523,8 +529,9 @@ function proximaFicha() {
 
 function criarFicha() {
   fichaAtiva = fichas.length;
-  fichas.push({'nome': null, 'vida': [null, null]})
-  abrirModalFichaCompleta()
+  fichas.push({'nome': null, 'vida': [null, null]});
+  ordensAtributos.push(['vida']);
+  abrirModalFichaCompleta();
 }
 
 let certeza = 0
@@ -542,10 +549,12 @@ function deletarFicha() {
     botao.innerHTML = 'DELETAR'
     
     fichas.splice(fichaAtiva, 1);
+    ordensAtributos.splice(fichaAtiva, 1);
     
     if (fichas.length === 0) {
       fichaAtiva = 0;
       fichas.push({'nome': '', 'vida': [0, 0]});
+      ordensAtributos.push(['vida']);
       salvarFicha();
       abrirModalFichaCompleta();
     } else {
@@ -566,6 +575,14 @@ function deletarFicha() {
 }
 
 function toggleModoReordenar() {
+  if (modoReordenar) {
+    const lista = document.getElementById('atributos-lista');
+    const novaOrdem = [...lista.querySelectorAll('.atributo')].map(el => el.dataset.chave);
+    ordensAtributos[fichaAtiva] = novaOrdem;
+    salvarFicha();
+    preencherSelectAtributos();
+    gerarControlesArrays();
+  }
   modoReordenar = !modoReordenar;
   mostrarAtributos();
 }
@@ -617,6 +634,7 @@ function importarFicha() {
       });
 
       fichas.push(fichaImportada);
+      ordensAtributos.push(Object.keys(fichaImportada).filter(k => k !== 'nome'));
       fichaAtiva = fichas.indexOf(fichaImportada);
 
       gerarControlesArrays();

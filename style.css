@@ -8,6 +8,10 @@ zoom: 1.75;
 transition: ease-in-out all;
 }
 
+#app * {
+  transition: all ease-in-out 0.2s;
+}
+
 #ficha-atributos {
   width: 70%;
   min-width: 0;
@@ -91,8 +95,8 @@ max-width: 100%;
 }
 
 /* ── Itens ─────────────────────────────────────────────────────────────────── */
-#field-itens * {
-  transition: all ease-in-out 0.2s;
+#field-itens{
+  margin: 0;
 }
 
 #div-lista-itens {
@@ -128,7 +132,7 @@ max-width: 100%;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: clamp(0.4rem, 2vw, 0.7rem);
+  font-size: clamp(0.4rem, 2vw, 0.9rem);
   padding: 0.3rem;
   word-wrap: break-word;
 }
@@ -425,10 +429,8 @@ flex: 1;
 .atributo.reordenavel {
 cursor: grab;
 background: #f9f9f9;
-padding: 8px;
-margin: 8px 0;
-border: 2px solid #ddd;
-border-radius: 4px;
+border: 2px solid gray;
+border-radius: 3px;
 transition: background 0.15s, border-color 0.15s, opacity 0.15s;
 display: flex;
 align-items: center;
