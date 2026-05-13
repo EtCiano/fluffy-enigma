@@ -260,6 +260,91 @@
     </div>
    </div>
 
+   <!-- Modal: Adicionar item -->
+   <div id="modal-adicionar-item" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Adicionar Item</h3>
+
+      <div class="detalhe-item">
+        <label for="item-nome">Nome</label>
+        <input type="text" id="item-nome" placeholder="Ex.: Espada Longa">
+      </div>
+      
+      <div class="detalhe-item">
+        <label for="item-valor">Valor</label>
+        <input type="text" id="item-valor" placeholder="Ex.: 10 PO">
+      </div>
+
+      <div class="detalhe-item">
+        <label for="item-tipo">Tipo</label>
+        <input type="text" id="item-tipo" placeholder="Ex.: Arma, Consumível, Armadura, etc">
+      </div>
+
+      <div class="detalhe-item">
+        <label for="item-cor">Cor de Destaque</label>
+        <select name="Cores" id="item-cor"></select>
+      </div>
+
+      <div id="detalhes-item"></div>
+
+      <button type="button" onclick="appItens.abrirModalNovoDetalhe()">+ Adicionar Detalhe</button>
+
+      <div class="modal-botoes">
+        <button onclick="appItens.salvarItem()">OK</button>
+        <button onclick="appItens.fecharModal('modal-adicionar-item')">Cancelar</button>
+      </div>
+    </div>
+   </div>
+
+   <!-- Modal: Modificar Item -->
+   <div id="modal-modificar-item" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Modificar Item</h3>
+
+      <div class="detalhe-item">
+        <label for="item-nome-modificar">Nome</label>
+        <input type="text" id="item-nome-modificar" placeholder="Ex.: Espada Longa">
+      </div>
+
+      <div class="detalhe-item">
+        <label for="item-valor-modificar">Valor</label>
+        <input type="text" id="item-valor-modificar" placeholder="Ex.: 10 PO">
+      </div>
+
+      <div class="detalhe-item">
+        <label for="item-tipo-modificar">Tipo</label>
+        <input type="text" id="item-tipo-modificar" placeholder="Ex.: Arma, Consumível, Armadura, etc">
+      </div>
+
+      <div class="detalhe-item">
+        <label for="item-cor-modificar">Cor de Destaque</label>
+        <select name="Cores" id="item-cor-modificar"></select>
+      </div>
+
+      <div id="detalhes-item-modificar"></div>
+
+      <button type="button" onclick="appItens.abrirModalNovoDetalhe()">+ Adicionar Detalhe</button>
+
+      <div class="modal-botoes">
+        <button onclick="appItens.salvarModificarItem()">OK</button>
+        <button onclick="appItens.fecharModal('modal-modificar-item')">Cancelar</button>
+      </div>
+    </div>
+   </div>
+
+   <!-- Modal: Novo Detalhe do Item -->
+   <div id="modal-novo-detalhe" class="modal" hidden>
+    <div class="modal-conteudo">
+      <h3>Novo Detalhe</h3>
+      <label for="novo-detalhe-nome">Nome do Detalhe</label>
+      <input type="text" id="novo-detalhe-nome" placeholder="ex: Dano, Peso, Efeito">
+      <div class="modal-botoes">
+        <button onclick="appItens.adicionarDetalhe()">OK</button>
+        <button onclick="appItens.fecharModal('modal-novo-detalhe')">Cancelar</button>
+      </div>
+    </div>
+   </div>
+
   <script src="js/fichas.js"></script>
   <script src="js/dados.js  "></script>
   <script src="js/iniciativa.js"></script>
