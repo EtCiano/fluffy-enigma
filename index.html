@@ -17,14 +17,10 @@
           <button onclick="appFichas.fichaAnterior()"><</button>
           <h2 id="nome-personagem"></h2>
           <button onclick="appFichas.proximaFicha()">></button>
-          <button onclick="appFichas.proximaFicha()">></button>
           <div class="botoes-cabecalho">
-            <button onclick="appFichas.criarFicha()">+ Ficha</button>
             <button onclick="appFichas.criarFicha()">+ Ficha</button>
           </div>
           <div class="botoes-cabecalho">
-            <button onclick="appFichas.abrirModalAdicionaratributo()">+ Atributo</button>
-            <button id="btn-modo-edicao" onclick="appFichas.toggleModoReordenar()">deletar/ordenar atributos</button>
             <button onclick="appFichas.abrirModalAdicionaratributo()">+ Atributo</button>
             <button id="btn-modo-edicao" onclick="appFichas.toggleModoReordenar()">deletar/ordenar atributos</button>
           </div>
@@ -58,13 +54,11 @@
         <legend>Alterar Atributo</legend>
         <select id="selecao-atributo"></select>
         <button onclick="appFichas.abrirModalAtributo()">Mudar Atributo</button>
-        <button onclick="appFichas.abrirModalAtributo()">Mudar Atributo</button>
       </fieldset>
 
       <!-- Editar ficha toda -->
       <fieldset id="frame-mudar-ficha-toda">
         <legend>Ficha Completa</legend>
-        <button onclick="appFichas.abrirModalFichaCompleta()">Alterar Ficha</button>
         <button onclick="appFichas.abrirModalFichaCompleta()">Alterar Ficha</button>
       </fieldset>
 
@@ -148,9 +142,7 @@
         <legend>Importar/Exportar Ficha</legend>
         <div id="importar-div">
           <button id="exportar-btn" onclick="appFichas.exportarFicha()">Exportar</button>
-          <button id="exportar-btn" onclick="appFichas.exportarFicha()">Exportar</button>
           <input type="file" id="fileInput" style="display: none;" accept=".txt">
-          <button id="importar-btn" onclick="appFichas.importarFicha()">Importar</button>
           <button id="importar-btn" onclick="appFichas.importarFicha()">Importar</button>
         </div>
       </fieldset>
@@ -158,7 +150,6 @@
       <!-- Deletar ficha atual-->
       <fieldset id="frame-reordenar-atributos">
         <legend class="deletar-field">Deletar ficha atual</legend>
-        <button class="deletar-field" id="botao-deletar" onclick="appFichas.deletarFicha()">DELETAR</button>
         <button class="deletar-field" id="botao-deletar" onclick="appFichas.deletarFicha()">DELETAR</button>
       </fieldset>
 
@@ -186,8 +177,6 @@
       <div class="modal-botoes">
         <button onclick="appFichas.salvarAtributo()">Salvar</button>
         <button onclick="appFichas.fecharModal('modal-atributo')">Cancelar</button>
-        <button onclick="appFichas.salvarAtributo()">Salvar</button>
-        <button onclick="appFichas.fecharModal('modal-atributo')">Cancelar</button>
       </div>
     </div>
   </div>
@@ -198,8 +187,6 @@
       <h3>Criar / Alterar Ficha</h3>
       <div id="modal-ficha-campos"></div>
       <div class="modal-botoes">
-        <button onclick="appFichas.salvarFichaCompleta()">OK</button>
-        <button onclick="appFichas.fecharModal('modal-ficha')">Cancelar</button>
         <button onclick="appFichas.salvarFichaCompleta()">OK</button>
         <button onclick="appFichas.fecharModal('modal-ficha')">Cancelar</button>
       </div>
@@ -218,8 +205,6 @@
         <h3>Criar Ficha</h3>
         <div id="modal-ficha-campos-primeira"></div>
         <div class="modal-botoes">
-        <button onclick="appFichas.salvarFichaCompleta()">OK</button>
-        <button onclick="appFichas.fecharModal('modal-ficha-primeira')">Cancelar</button>
         <button onclick="appFichas.salvarFichaCompleta()">OK</button>
         <button onclick="appFichas.fecharModal('modal-ficha-primeira')">Cancelar</button>
       </div>
@@ -255,8 +240,6 @@
       </div>
       
       <div class="modal-botoes">
-        <button onclick="appFichas.adicionarAtributo()">OK</button>
-        <button onclick="appFichas.fecharModal('modal-add-atributo')">Cancelar</button>
         <button onclick="appFichas.adicionarAtributo()">OK</button>
         <button onclick="appFichas.fecharModal('modal-add-atributo')">Cancelar</button>
       </div>
