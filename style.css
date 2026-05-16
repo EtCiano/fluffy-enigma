@@ -154,6 +154,39 @@ max-width: 100%;
   opacity: 0.35;
 }
 
+.itens.dourado,
+.itens.prateado {
+  position: relative;
+  overflow: hidden;
+}
+
+.itens.dourado::after,
+.itens.prateado::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 70%
+  );
+  animation: brilho 3s infinite;
+  pointer-events: none;
+}
+
+@keyframes brilho {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
 #btns-itens {
   display: flex;
   gap: 8px;

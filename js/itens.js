@@ -333,6 +333,10 @@ function mostrarItens() {
         divItem.draggable = true;
         divItem.dataset.indice = idx;
         divItem.textContent = item['nome'];
+        
+        if (item['cor'] === 'dourado' || item['cor'] === 'prateado') {
+            divItem.classList.add(item['cor']);
+        }
 
         divItem.addEventListener('dragstart', aoArrastar);
         divItem.addEventListener('dragend', aoPararArrastar);
