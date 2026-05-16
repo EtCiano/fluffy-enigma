@@ -517,6 +517,7 @@ background: #e8f5e9;
 .btn-deletar-atributo {
 margin-left: auto;
 background: none;
+align-self: self-start;
 border: none;
 cursor: pointer;
 font-size: 1em;
