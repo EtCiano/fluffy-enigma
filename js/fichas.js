@@ -145,6 +145,11 @@ function gerarControlesArrays() {
     fieldset.appendChild(btn);
     container.appendChild(fieldset);
   });
+
+  // Limpar ordensAtributos de chaves que não existem mais
+  if (ordensAtributos[fichaAtiva]) {
+    ordensAtributos[fichaAtiva] = ordensAtributos[fichaAtiva].filter(k => ficha[k] !== undefined);
+  }
 }
 
 // ─── Drag-and-drop para reordenar (API nativa HTML5) ─────────────────────────
