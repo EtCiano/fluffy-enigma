@@ -19,6 +19,9 @@ transition: ease-in-out all;
 
 #frame-atributos {
 flex: 1;
+gap: 10px;
+display: flex;
+flex-direction: column;
 min-width: 0;
 }
 
@@ -82,10 +85,10 @@ gap: 6px;
 display: flex;
 flex-wrap: wrap;
 justify-content: space-between;
-margin: 4px 0;
+margin: 1px 0;
 gap: 4px;
-border: 1px gray solid;
-padding: 5px;
+/* border: 1px gray solid; */
+padding: 1px;
 box-sizing: border-box;
 }
 
@@ -100,7 +103,7 @@ max-width: 100%;
 }
 
 #div-lista-itens {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 #grid-itens {
