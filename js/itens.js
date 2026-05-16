@@ -71,7 +71,25 @@ function mudarItensFicha() {
     const original = appFichas[nome];
     if (typeof original !== 'function') return;
     appFichas[nome] = function(...args) {
+        const idxAntes = appFichas.fichaAtiva;
+        const qtdAntes = appFichas.fichas.length;
+        const fichaAntes = qtdAntes > 0 ? appFichas.fichas[idxAntes] : null;
+
         const result = original.apply(this, args);
+
+        if (nome === 'deletarFicha' && (
+            appFichas.fichas.length !== qtdAntes ||
+            (fichaAntes && appFichas.fichas[idxAntes] !== fichaAntes)
+        )) {
+            itens.splice(idxAntes, 1);
+            while (itens.length < appFichas.fichas.length) {
+                itens.push([]);
+            }
+            indiceAtual = appFichas.fichaAtiva;
+            setTimeout(() => mudarItensFicha(), 0);
+            return result;
+        }
+
         const novoIndice = appFichas.fichaAtiva;
         if (novoIndice !== indiceAtual) {
             indiceAtual = novoIndice;
