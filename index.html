@@ -223,7 +223,7 @@
 
       <label for="valor-novo-atributo" class="valor-novo-atributo">Valor do Novo Atributo</label>
       <div id="container-valor">
-        <input type="number" id="valor-novo-atributo" placeholder="Valor">
+        <textarea id="valor-novo-atributo" placeholder="Valor" rows="3"></textarea>
       </div>
       <div id="container-array" class="campo-barra" style="display: none;">
         <input type="number" id="valor-novo-atributo-atual" placeholder="Valor Atual">
@@ -231,14 +231,20 @@
         <input type="number" id="valor-novo-atributo-max" placeholder="Valor Máximo">
       </div>
 
-      <div class="checkbox-linha">
-        <label for="atributo-novo-texto">Atributo é um Texto</label>
-        <input type="checkbox" class="checkbox" id="atributo-novo-texto">
-      </div>
-
-      <div class="checkbox-linha">
-        <label for="atributo-novo-array">Atributo Tem um valor total e um atual</label>
-        <input type="checkbox" class="checkbox" id="atributo-novo-array">
+      <div class="radio-grupo">
+        <label>Tipo de Atributo</label>
+        <div class="radio-linha">
+          <input type="radio" id="atributo-tipo-numero" name="tipo-atributo" value="numero" checked class="radio-radio">
+          <label for="atributo-tipo-numero" class="radio-elemento">Número</label>
+        </div>
+        <div class="radio-linha">
+          <input type="radio" id="atributo-tipo-texto" name="tipo-atributo" value="texto" class="radio-radio">
+          <label for="atributo-tipo-texto" class="radio-elemento">Texto</label>
+        </div>
+        <div class="radio-linha">
+          <input type="radio" id="atributo-tipo-barra" name="tipo-atributo" value="barra" class="radio-radio">
+          <label for="atributo-tipo-barra" class="radio-elemento">Barra (Atual/Total)</label>
+        </div>
       </div>
       
       <div class="modal-botoes">
@@ -354,44 +360,31 @@
   <script src="js/calculadora.js"></script>
   <script src="js/itens.js"></script>
   <script>
-    const checkTexto = document.getElementById('atributo-novo-texto');
-    const checkArray = document.getElementById('atributo-novo-array');
+    const radioNumero = document.getElementById('atributo-tipo-numero');
+    const radioTexto = document.getElementById('atributo-tipo-texto');
+    const radioBarra = document.getElementById('atributo-tipo-barra');
     const inputValor = document.getElementById('valor-novo-atributo');
+    const containerValor = document.getElementById('container-valor');
     const containerArray = document.getElementById('container-array');
 
-    checkTexto.addEventListener('change', () => {
-      if (checkTexto.checked && checkArray.checked) {
-        alert('Não é possível selecionar ambos os tipos. Desmarque um deles.');
-        checkTexto.checked = false;
-        return;
-      }
-      if (checkTexto.checked) {
-        inputValor.type = 'text';
-        inputValor.placeholder = 'Texto';
-        document.getElementById('container-valor').style.display = 'block';
+    function atualizarCampos() {
+      if (radioNumero.checked) {
+        containerValor.innerHTML = '<input type="number" id="valor-novo-atributo" placeholder="Valor">';
+        containerValor.style.display = 'block';
         containerArray.style.display = 'none';
-      } else {
-        inputValor.type = 'number';
-        inputValor.placeholder = 'Valor';
-        document.getElementById('container-valor').style.display = 'block';
+      } else if (radioTexto.checked) {
+        containerValor.innerHTML = '<textarea id="valor-novo-atributo" placeholder="Texto" rows="3"></textarea>';
+        containerValor.style.display = 'block';
         containerArray.style.display = 'none';
-      }
-    });
-
-    checkArray.addEventListener('change', () => {
-      if (checkTexto.checked && checkArray.checked) {
-        alert('Não é possível selecionar ambos os tipos. Desmarque um deles.');
-        checkArray.checked = false;
-        return;
-      }
-      if (checkArray.checked) {
-        document.getElementById('container-valor').style.display = 'none';
+      } else if (radioBarra.checked) {
+        containerValor.style.display = 'none';
         containerArray.style.display = 'flex';
-      } else {
-        document.getElementById('container-valor').style.display = 'block';
-        containerArray.style.display = 'none';
       }
-    });
+    }
+
+    radioNumero.addEventListener('change', atualizarCampos);
+    radioTexto.addEventListener('change', atualizarCampos);
+    radioBarra.addEventListener('change', atualizarCampos);
   </script>
 </body>
 </html>

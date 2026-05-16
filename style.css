@@ -95,6 +95,29 @@ box-sizing: border-box;
 .atributo-valor {
 word-break: break-word;
 max-width: 100%;
+text-align: right;
+}
+
+.radio-linha {
+  display: flex;
+  height: 20px;
+}
+
+.radio-elemento {
+  width: 80%;
+}
+
+.radio-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.radio-radio {
+  width: 10px;
+  height: 100%;
+  margin: 0;
+  margin-right: 10px;
 }
 
 /* ── Itens ─────────────────────────────────────────────────────────────────── */
@@ -347,6 +370,10 @@ box-sizing: border-box;
 width: 100%;
 box-sizing: border-box;
 padding: 8px;
+}
+
+.modal-conteudo input[type="radio"] {
+  width: auto;
 }
 
 .modal-conteudo input.checkbox {

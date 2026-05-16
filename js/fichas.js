@@ -77,9 +77,10 @@ function mostrarAtributos() {
         <span class="atributo-nome">${capitalizar(chave)}:</span>
         <span class="atributo-valor barra">${valor[0]} / ${valor[1]}</span>`;
     } else {
+      const valorFormatado = String(valor).replace(/\n/g, '<br>');
       item.innerHTML += `
         <span class="atributo-nome">${capitalizar(chave)}:</span>
-        <span class="atributo-valor">${valor}</span>`;
+        <span class="atributo-valor">${valorFormatado}</span>`;
     }
 
     if (modoReordenar) {
@@ -421,15 +422,11 @@ function salvarFichaCompleta() {
 }
 
 function abrirModalAdicionaratributo() {
-  // Limpa campos ao abrir
   document.getElementById('nome-novo-atributo').value   = '';
-  document.getElementById('valor-novo-atributo').value  = '';
   document.getElementById('valor-novo-atributo-atual').value = '';
   document.getElementById('valor-novo-atributo-max').value = '';
-  document.getElementById('atributo-novo-texto').checked = false;
-  document.getElementById('atributo-novo-array').checked = false;
-  document.getElementById('valor-novo-atributo').type   = 'number';
-  document.getElementById('valor-novo-atributo').placeholder = 'Valor';
+  document.getElementById('atributo-tipo-numero').checked = true;
+  document.getElementById('container-valor').innerHTML = '<input type="number" id="valor-novo-atributo" placeholder="Valor">';
   document.getElementById('container-valor').style.display = 'block';
   document.getElementById('container-array').style.display = 'none';
   abrirModal('modal-add-atributo');
@@ -440,12 +437,13 @@ function adicionarAtributo() {
   const nome = inputNome.value.trim();
   if (!nome) return;
 
-  const eTexto = document.getElementById('atributo-novo-texto').checked;
-  const eArray = document.getElementById('atributo-novo-array').checked;
+  const tipoNumero = document.getElementById('atributo-tipo-numero').checked;
+  const tipoTexto = document.getElementById('atributo-tipo-texto').checked;
+  const tipoBarra = document.getElementById('atributo-tipo-barra').checked;
 
-  if (eTexto) {
+  if (tipoTexto) {
     fichas[fichaAtiva][nome] = document.getElementById('valor-novo-atributo').value;
-  } else if (eArray) {
+  } else if (tipoBarra) {
     fichas[fichaAtiva][nome] = [
       parseInt(document.getElementById('valor-novo-atributo-atual').value, 10) || 0,
       parseInt(document.getElementById('valor-novo-atributo-max').value, 10) || 0,
