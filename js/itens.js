@@ -67,7 +67,7 @@ function mudarItensFicha() {
 
 // ─── Interceptar troca de ficha ───────────────────────────────────────────────
 
-['fichaAnterior', 'proximaFicha', 'criarFicha', 'deletarFicha', 'importarFicha'].forEach(nome => {
+['fichaAnterior', 'proximaFicha', 'criarFicha', 'deletarFicha'].forEach(nome => {
     const original = appFichas[nome];
     if (typeof original !== 'function') return;
     appFichas[nome] = function(...args) {
@@ -351,6 +351,18 @@ function mostrarItens() {
 function abrirModal(id)  { document.getElementById(id).hidden = false; }
 function fecharModal(id) { document.getElementById(id).hidden = true;  }
 
+function exportarItensFicha() {
+    return JSON.stringify(itens[indiceAtual]);
+}
+
+function importarItensFicha(jsonStr) {
+    const idx = appFichas.fichaAtiva;
+    itens[idx] = JSON.parse(jsonStr);
+    indiceAtual = idx;
+    salvarItens();
+    mostrarItens();
+}
+
 document.addEventListener('click', (e) => {
     const desc = document.getElementById('descricao-item');
     if (!desc.hidden && !desc.contains(e.target) && !e.target.closest('.itens')) {
@@ -374,7 +386,9 @@ const appItens = {
     fecharModal,
     deletarItem,
     abrirModalModificarItem,
-    salvarModificarItem
+    salvarModificarItem,
+    exportarItensFicha,
+    importarItensFicha
 }
 
 const ItensExiste = carregarItens();

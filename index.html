@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrador de Ficha</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
   <canvas id="fundo"></canvas>
@@ -142,7 +143,7 @@
         <legend>Importar/Exportar Ficha</legend>
         <div id="importar-div">
           <button id="exportar-btn" onclick="appFichas.exportarFicha()">Exportar</button>
-          <input type="file" id="fileInput" style="display: none;" accept=".txt">
+          <input type="file" id="fileInput" style="display: none;" accept=".zip">
           <button id="importar-btn" onclick="appFichas.importarFicha()">Importar</button>
         </div>
       </fieldset>

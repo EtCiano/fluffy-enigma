@@ -34,6 +34,13 @@ If adding a new script: after `fichas.js` if it depends on `appFichas`, otherwis
 - Description popup (`#descricao-item`) is a static HTML element with **modificar** and **deletar** buttons. Positioned at click coordinates, populated via `mostrarDescricao()`.
 - Drag-and-drop reorder via HTML5 DnD API (same pattern as attribute reorder in `fichas.js`).
 
+## Export / Import
+
+- **Export** (`exportarFicha` in `fichas.js`): generates a `.zip` via JSZip CDN containing `ficha.txt` (key: value, same format) and `itens.txt` (JSON array of current ficha's items).
+- **Import** (`importarFicha` in `fichas.js`): reads a `.zip` with JSZip, parses `ficha.txt` and `itens.txt`, pushes the ficha + items to the respective arrays, syncs `indiceAtual`.
+- `importarFicha` is **not** monkey-patched (async) — items are handled explicitly inside the import flow.
+- JSZip loaded from CDN (`index.html:8`).
+
 ## Style quirks (`style.css`)
 
 - Item grid: 5 cols → 4 (≤500px) → 3 (≤400px).

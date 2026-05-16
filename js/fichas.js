@@ -593,59 +593,69 @@ function exportarFicha() {
                                                         .split(' ')
                                                         .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1))
                                                         .join('')}`;
-  
-  const conteudo = Object.entries(fichas[fichaAtiva])
+
+  const conteudoFicha = Object.entries(fichas[fichaAtiva])
     .map(([chave, valor]) => `${chave}: ${Array.isArray(valor) ? valor.join("/") : valor}`)
     .join('\n');
 
-  const blob = new Blob([conteudo], { type: 'text/plain' });
-  
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = nomeArquivo;
-  
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const zip = new JSZip();
+  zip.file('ficha.txt', conteudoFicha);
+  zip.file('itens.txt', appItens.exportarItensFicha());
+
+  zip.generateAsync({ type: 'blob' }).then(blob => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${nomeArquivo}.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
 }
 
 function importarFicha() {
-  const fileInput = document.getElementById('fileInput')
-  fileInput.click()
+  const fileInput = document.getElementById('fileInput');
+  fileInput.value = '';
+  fileInput.click();
 
   fileInput.addEventListener('change', (event) => {
-  const arquivo = event.target.files[0];
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
 
-  if (arquivo) {
     const leitor = new FileReader();
-
-    let fichaImportada = {};
     leitor.onload = (e) => {
-      let conteudo_linhas = e.target.result.split('\n');
-      conteudo_linhas.forEach(linha => {
-        linhaFormatada = linha.replace(" ", "").split(":")
-        if (isStringInt(linhaFormatada[1])) {
-          fichaImportada[linhaFormatada[0]] = parseInt(linhaFormatada[1], 10);
-        } else if (linhaFormatada[1].includes("/")) {
-          fichaImportada[linhaFormatada[0]] = linhaFormatada[1].split("/").map(element => parseInt(element, 10));
-        } else {
-          fichaImportada[linhaFormatada[0]] = linhaFormatada[1];
-        }
+      JSZip.loadAsync(e.target.result).then(zip => {
+        const fichaPromise = zip.file('ficha.txt').async('string');
+        const itensPromise = zip.file('itens.txt').async('string');
+        return Promise.all([fichaPromise, itensPromise]);
+      }).then(([fichaStr, itensStr]) => {
+        let fichaImportada = {};
+        fichaStr.split('\n').forEach(linha => {
+          const partes = linha.split(':');
+          const chave = partes[0].trim();
+          const valor = partes.slice(1).join(':').trim();
+          if (isStringInt(valor)) {
+            fichaImportada[chave] = parseInt(valor, 10);
+          } else if (valor.includes("/")) {
+            fichaImportada[chave] = valor.split("/").map(element => parseInt(element, 10));
+          } else {
+            fichaImportada[chave] = valor;
+          }
+        });
+
+        fichas.push(fichaImportada);
+        ordensAtributos.push(Object.keys(fichaImportada).filter(k => k !== 'nome'));
+        fichaAtiva = fichas.indexOf(fichaImportada);
+
+        appItens.importarItensFicha(itensStr);
+
+        gerarControlesArrays();
+        mostrarAtributos();
+        preencherSelectAtributos();
+        salvarFicha();
       });
-
-      fichas.push(fichaImportada);
-      ordensAtributos.push(Object.keys(fichaImportada).filter(k => k !== 'nome'));
-      fichaAtiva = fichas.indexOf(fichaImportada);
-
-      gerarControlesArrays();
-      mostrarAtributos();
-      preencherSelectAtributos();
-      salvarFicha();
     };
-
-    leitor.readAsText(arquivo);
-  }
-});
+    leitor.readAsArrayBuffer(arquivo);
+  }, { once: true });
 }
 // ─── Modais ───────────────────────────────────────────────────────────────────
 
