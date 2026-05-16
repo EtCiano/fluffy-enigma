@@ -3,7 +3,17 @@ const STORAGE_KEY_ITENS = 'itens'
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
-let indiceAtual = appFichas.fichaAtiva;
+let indiceAtual = 0;
+
+setInterval(() => {
+  if (typeof state !== 'undefined' && indiceAtual !== state.fichaAtiva) {
+    indiceAtual = state.fichaAtiva;
+    if (itens[indiceAtual] === undefined) {
+      itens[indiceAtual] = [];
+    }
+    mostrarItens();
+  }
+}, 100);
 
 let itens = [
     []

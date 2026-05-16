@@ -321,11 +321,6 @@ padding: 8px;
 font-weight: 500;
 }
 
-.detalhe-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
 
 .detalhe-item-header {
   display: flex;
@@ -337,7 +332,7 @@ font-weight: 500;
   font-weight: 500;
 }
 
-#detalhes-item-modificar {
+#detalhes-item-modificar, #detalhes-item {
   display: flex;
   flex-direction: column;
   gap: 20px;
