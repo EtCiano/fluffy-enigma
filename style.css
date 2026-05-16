@@ -98,6 +98,10 @@ max-width: 100%;
 text-align: right;
 }
 
+.atributo-nome {
+  align-self: self-start;
+}
+
 .radio-linha {
   display: flex;
   height: 20px;
