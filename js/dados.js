@@ -1,5 +1,7 @@
 // ─── Dados ────────────────────────────────────────────────────────────────────
 
+let contagemDados = 1;
+
 function rolarDado(lados) {
   const quantidade = parseInt(document.getElementById('quantidade-dados').value) || 1;
   const modificador = parseInt(document.getElementById('modificador').value) || 0;
@@ -10,7 +12,6 @@ function rolarDado(lados) {
   const historico = document.getElementById('historico-dados')
   
   let roladas = [];
-
   let total = 0;
 
   const quantidadeParaLoop = quantidade === 1? quantidade + 1 : quantidade
@@ -44,14 +45,18 @@ function rolarDado(lados) {
 
   const dadoHistorico = document.createElement('div');
 
-  console.log(roladas)
   if (roladas.length === 1) {
-    dadoHistorico.innerHTML = total;
+    dadoHistorico.innerHTML = `${contagemDados}. ${total}`;
   } else {
-    dadoHistorico.innerHTML = normal ? `${total} <span class="dado-cinza">(${roladas.join('+')})</span>` : `${total} <span class="dado-cinza">(${roladas.join(' , ')})</span>`;
+    dadoHistorico.innerHTML = normal ? `${contagemDados}. ${total} <span class="dado-cinza">(${roladas.join('+')})</span>` : `${total} <span class="dado-cinza">(${roladas.join(' , ')})</span>`;
   }
   dadoHistorico.classList.add('dado-no-historico');
   historico.append(dadoHistorico)
+  contagemDados++;
+  historico.scrollTo({
+    top: historico.scrollHeight,
+    behavior: "smooth"
+  });
 }
 
 const appDados = {
