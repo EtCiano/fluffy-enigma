@@ -7,26 +7,51 @@ function rolarDado(lados) {
   const vantagem = document.getElementById('vantagem').checked;
   const desvantagem = document.getElementById('desvantagem').checked;
   const resultado = document.getElementById('resultado');
+  const historico = document.getElementById('historico-dados')
+  
+  let roladas = [];
+
+  let total = 0;
+
+  const quantidadeParaLoop = quantidade === 1? quantidade + 1 : quantidade
 
   if (normal) {
-    let total = 0;
     for (let i = 0; i < quantidade; i++) {
-      total += Math.floor(Math.random() * lados) + 1;
+      let dadoAtual = Math.floor(Math.random() * lados) + 1;
+      roladas.push(dadoAtual)
+      total += dadoAtual;
     }
     resultado.textContent = total + modificador;
   } else if (vantagem) {
-    let roladas = [];
-    for (let i = 0; i < quantidade; i++) {
-      roladas.push(Math.floor(Math.random() * lados) + 1);
+    roladas = [];
+    for (let i = 0; i < quantidadeParaLoop; i++) {
+      let dadoAtual = Math.floor(Math.random() * lados) + 1;
+      roladas.push(dadoAtual)
     }
-    resultado.textContent = Math.max(...roladas) + modificador;
+
+    total = Math.max(...roladas);
   } else if (desvantagem) {
-    let roladas = [];
-    for (let i = 0; i < quantidade; i++) {
-      roladas.push(Math.floor(Math.random() * lados) + 1);
+    roladas = [];
+    for (let i = 0; i < quantidadeParaLoop; i++) {
+      let dadoAtual = Math.floor(Math.random() * lados) + 1;
+      roladas.push(dadoAtual)
     }
-    resultado.textContent = Math.min(...roladas) + modificador;
+
+    total = Math.min(...roladas);
   }
+  
+  resultado.textContent = total + modificador;
+
+  const dadoHistorico = document.createElement('div');
+
+  console.log(roladas)
+  if (roladas.length === 1) {
+    dadoHistorico.innerHTML = total;
+  } else {
+    dadoHistorico.innerHTML = normal ? `${total} <span class="dado-cinza">(${roladas.join('+')})</span>` : `${total} <span class="dado-cinza">(${roladas.join(' , ')})</span>`;
+  }
+  dadoHistorico.classList.add('dado-no-historico');
+  historico.append(dadoHistorico)
 }
 
 const appDados = {

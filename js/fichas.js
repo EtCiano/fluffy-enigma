@@ -732,7 +732,7 @@ const appFichas = {
 };
 
 (function init() {
-  mudarModo(localStorage.getItem('theme') === 'dark')
+  mudarModo()
   const fichaExiste = carregarFicha();
   if (!fichaExiste || fichas.length === 0 || !fichas[fichaAtiva]) {
     abrirModalPrimeiraVez();
