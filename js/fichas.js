@@ -1,5 +1,6 @@
 const STORAGE_KEY_FICHA = 'ficha';
 const STORAGE_KEY_ORDEM = 'ordem_atributos';
+let modoEscuro = false;
 
 // ─── Estado ───────────────────────────────────────────────────────────────────
 
@@ -660,6 +661,22 @@ function importarFicha() {
     leitor.readAsArrayBuffer(arquivo);
   }, { once: true });
 }
+
+function mudarModo(modo) {
+  const raiz = document.documentElement;
+  if (modo === undefined) modoEscuro = !modoEscuro;
+  else modoEscuro = modo;
+  if (modoEscuro) {
+    raiz.style.setProperty('--cor-fundo', 'black');
+    raiz.style.setProperty('--cor-principal', 'white');
+    raiz.style.setProperty('--cor-secundaria', 'rgb(57, 57, 57)');
+  } else {
+    raiz.style.setProperty('--cor-fundo', 'white');
+    raiz.style.setProperty('--cor-principal', 'black');
+    raiz.style.setProperty('--cor-secundaria', 'rgb(196, 196, 196)')
+  }
+  localStorage.setItem('theme', modoEscuro ? 'dark' : 'light');
+}
 // ─── Modais ───────────────────────────────────────────────────────────────────
 
 function abrirModal(id)  { document.getElementById(id).hidden = false; }
@@ -709,11 +726,13 @@ const appFichas = {
   exportarFicha,
   importarFicha,
   deletarFicha,
+  mudarModo,
   get fichaAtiva() { return fichaAtiva; },
   get fichas() { return fichas; }
 };
 
 (function init() {
+  mudarModo(localStorage.getItem('theme') === 'dark')
   const fichaExiste = carregarFicha();
   if (!fichaExiste || fichas.length === 0 || !fichas[fichaAtiva]) {
     abrirModalPrimeiraVez();

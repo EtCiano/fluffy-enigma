@@ -6,11 +6,11 @@
   --cor-secundaria: rgb(196, 196, 196);
 }
 
-p, div, legend, button {
+p, div, legend, button, select {
   color: var(--cor-principal);
 }
 
-body, input {
+body, input, select {
   background-color: var(--cor-fundo);
 }
 
@@ -56,10 +56,28 @@ display: flex;
 flex-direction: column;
 gap: 12px;
 width: 40%;
-overflow-y: scroll;
-overflow-x: none;
+/* overflow-y: auto; */
+/* overflow-x: hidden; */
 height: 100vh;
 flex-shrink: 0;
+overscroll-behavior: auto;
+}
+
+
+
+#frame-controles::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+
+#frame-controles::-webkit-scrollbar-track {
+  background: var(--cor-fundo, #f1f1f1);
+  padding: 5px;
+}
+
+#frame-controles::-webkit-scrollbar-thumb {
+  background: var(--cor-principal, #2196f3);
+  border-radius: 5px;
 }
 
 #fundo {

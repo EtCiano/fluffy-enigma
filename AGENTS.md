@@ -4,7 +4,7 @@ Single-page RPG character sheet manager (vanilla HTML/CSS/JS, Portuguese).
 
 ## Quick start
 
-No build step. Open `index.html` in any browser. State persisted to `localStorage` — keys `'ficha'` (character sheets, `fichas.js`) and `'itens'` (inventory, `itens.js`).
+Open `index.html` in any browser. No build step. State persisted to `localStorage` — keys `'ficha'` + `'ordem_atributos'` (`fichas.js`), `'itens'` (`itens.js`), `'theme'` (dark/light mode).
 
 ## Script load order (`index.html`)
 
@@ -12,46 +12,32 @@ No build step. Open `index.html` in any browser. State persisted to `localStorag
 fichas.js → dados.js → iniciativa.js → (fundo.js commented out) → calculadora.js → itens.js
 ```
 
-`fichas.js` must be before `itens.js` — `itens.js` reads `appFichas.fichaAtiva` at module level and proxied functions.
-
-If adding a new script: after `fichas.js` if it depends on `appFichas`, otherwise at the end.
+`fichas.js` must be before `itens.js` — `itens.js` reads `appFichas.fichaAtiva` at module level and monkey-patches it. New script: after `fichas.js` if it depends on `appFichas`.
 
 ## Architecture
 
-- **Entrypoint:** `index.html` — loads scripts via `<script>` tags (order matters).
-- **JS modules** each export a global namespace: `appFichas`, `appCalc`, `appDados`, `appIniciativa`, `appItens`.
-- **`fichas.js`** is the core (character sheet CRUD). Defines `appFichas` with getter `fichaAtiva`.
-- **`fundo.js`** is a decorative animated background, commented out. Don't uncomment without checking performance.
-- **Theme** (`tema.js`) sets CSS custom properties via JS, persisted to `localStorage` key `'theme'`. Not driven by CSS media queries.
+- **JS modules** each export a global namespace: `appFichas`, `appCalc`, `appDados`, `appIniciativa`, `appItens`. No module bundler — plain `<script>` tags.
+- **`fichas.js`** is core (character sheet CRUD). Defines `appFichas` with getters `fichaAtiva` and `fichas`.
+- **`itens.js`** monkey-patches `appFichas.fichaAnterior`, `proximaFicha`, `criarFicha`, `deletarFicha` (but **not** `importarFicha` — items are handled explicitly inside the async import flow). When any of these changes `fichaAtiva`, `mudarItensFicha()` syncs the items view.
+- **`tema.js`** exists but is **not loaded** in `index.html` — dead code. The dark/light toggle UI elements it references (`#modoclaro`, `#modoescuro`) don't exist in the DOM. Don't uncomment or fix without understanding the intent.
+- **`fundo.js`** decorative animated canvas background, commented out. Don't uncomment without checking performance.
 
-## Itens System (`itens.js`)
+### Itens (`itens.js`)
 
-- Data: `itens[indiceFicha][indiceItem]` — 2D array persisted to `localStorage` key `'itens'`.
-- `indiceAtual` (line 6) reads `appFichas.fichaAtiva` on load and is updated by a **monkey-patch** on `appFichas` (line 85). The patch wraps `fichaAnterior`, `proximaFicha`, `criarFicha`, `deletarFicha`, and `importarFicha` — after any of these runs, if `fichaAtiva` changed, `mudarItensFicha()` is called automatically and `indiceAtual` is updated.
-- Item obj keys: `nome` (required), `valor`, `tipo`, `cor`, plus any dynamic details.
-- `cor` selects background from a 16-color palette (`cores` at line 37).
-- C R U D: modals `modal-adicionar-item`, `modal-modificar-item`, `modal-novo-detalhe`. Detail keys are added dynamically via the second modal — tracked in `detalhesItem[]` + `detalhesContainer`.
-- Description popup (`#descricao-item`) is a static HTML element with **modificar** and **deletar** buttons. Positioned at click coordinates, populated via `mostrarDescricao()`.
-- Drag-and-drop reorder via HTML5 DnD API (same pattern as attribute reorder in `fichas.js`).
+- Data: `itens[indiceFicha][indiceItem]` — 2D array, `localStorage` key `'itens'`.
+- Item keys: `nome` (required), `valor`, `tipo`, `cor` (selects from a 16-color palette), plus any dynamic detail keys added via `modal-novo-detalhe`.
+- CRUD modals: `modal-adicionar-item`, `modal-modificar-item`, `modal-novo-detalhe`.
+- Description popup (`#descricao-item`): positioned at click coordinates, populated via `mostrarDescricao()`, with **modificar** and **deletar** buttons.
+- Drag-and-drop reorder via HTML5 DnD API.
 
-## Export / Import
+### Export / Import
 
-- **Export** (`exportarFicha` in `fichas.js`): generates a `.zip` via JSZip CDN containing `ficha.txt` (key: value, same format) and `itens.txt` (JSON array of current ficha's items).
-- **Import** (`importarFicha` in `fichas.js`): reads a `.zip` with JSZip, parses `ficha.txt` and `itens.txt`, pushes the ficha + items to the respective arrays, syncs `indiceAtual`.
-- `importarFicha` is **not** monkey-patched (async) — items are handled explicitly inside the import flow.
+- **Export** (`exportarFicha`): generates `.zip` via JSZip CDN containing `ficha.txt` (key: value) and `itens.txt` (JSON array of current ficha's items).
+- **Import** (`importarFicha`): reads a `.zip` with JSZip, parses both files, pushes ficha + items to respective arrays, syncs `indiceAtual`.
 - JSZip loaded from CDN (`index.html:8`).
 
-## Style quirks (`style.css`)
-
-- Item grid: 5 cols → 4 (≤500px) → 3 (≤400px).
-- Items use `::before { padding-bottom: 100% }` for square aspect ratio.
-- Font: `clamp(0.4rem, 2vw, 0.7rem)`.
-
-## Git conventions
+## Conventions
 
 - Branch names: descriptive lowercase with hyphens (e.g. `feature-equipamentos`).
 - Origin: `https://github.com/EtCiano/lagartixos.git`
-
-## Testing / Linting / Formatting
-
-None. No package.json, no build tools, no CI.
+- No tests, no linting, no formatting, no CI. No `package.json`.
