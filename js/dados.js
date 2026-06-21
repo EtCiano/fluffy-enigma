@@ -46,9 +46,23 @@ function rolarDado(lados) {
   const dadoHistorico = document.createElement('div');
 
   if (roladas.length === 1) {
-    dadoHistorico.innerHTML = `${contagemDados}. ${total}`;
+    if (modificador !== 0) {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total + modificador} (${total} + ${modificador})`;
+    } else {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total}`;
+    }
+  } else if (normal) {
+    if (modificador !== 0) {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total + modificador} (${total} + ${modificador}) <span class="dado-cinza"> (${roladas.join('+')})</span>`;
+    } else {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total} <span class="dado-cinza">(${roladas.join('+')})</span>`;
+    }
   } else {
-    dadoHistorico.innerHTML = normal ? `${contagemDados}. ${total} <span class="dado-cinza">(${roladas.join('+')})</span>` : `${total} <span class="dado-cinza">(${roladas.join(' , ')})</span>`;
+    if (modificador !== 0) {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total + modificador} (${total} + ${modificador}) <span class="dado-cinza">(${roladas.join(' , ')})</span>`;
+    } else {
+      dadoHistorico.innerHTML = `${contagemDados}. ${total}  <span class="dado-cinza"> (${roladas.join(' , ')})</span>`;
+    }
   }
   dadoHistorico.classList.add('dado-no-historico');
   historico.append(dadoHistorico)

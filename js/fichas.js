@@ -11,7 +11,7 @@ let fichas = [
   }
 ];
 
-let ordensAtributos = [[]];
+let ordensAtributos = [['vida']];
 let fichaAtiva = 0;
 let indiceAtributoSendoEditado = null;
 let modoReordenar = false;
@@ -28,6 +28,12 @@ function carregarFicha() {
     } else {
       ordensAtributos = fichas.map(f => Object.keys(f).filter(k => k !== 'nome'));
     }
+    fichas.forEach((f, i) => {
+      if (f['vida'] !== undefined && !(ordensAtributos[i] || []).includes('vida')) {
+        if (!ordensAtributos[i]) ordensAtributos[i] = [];
+        ordensAtributos[i].push('vida');
+      }
+    });
     return true;
   }
   return false;

@@ -352,8 +352,9 @@ min-width: 60px;
   border-radius: 5px;
 }
 
-#dado-no-historico {
+.dado-no-historico {
   display: flex;
+  font-size: 15px;
 }
 
 .dados-opcoes {
